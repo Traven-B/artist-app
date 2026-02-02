@@ -1,0 +1,29 @@
+{{define "todo_list_items"}}
+{{range .ToAdd}}
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+{{.}}" target="_blank">{{.}}</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22{{.}}%22+around+twenty+words&udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button
+            class="add-btn"
+            hx-post="/populate-form"
+            hx-vals='{"name": "{{.}}"}'
+            hx-target="#artist-form"
+            hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button
+            class="delete-local-btn"
+            onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+{{else}}
+<li><em>No artists to add.</em></li>
+{{end}}
+{{end}}

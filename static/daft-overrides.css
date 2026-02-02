@@ -1,0 +1,24 @@
+/*
+  Daft overrides
+  ----------------
+  Purpose:
+  - Larger global text
+  - Tighter vertical rhythm for forms
+  - Component-level tweaks (like list buttons) are done elsewhere
+*/
+
+:root {
+
+    /* Global text scale: 21px if browser default is 16px */
+    --daft-font-size: 131.25%;
+
+    /* Form element vertical spacing (tight but readable) */
+    --daft-form-element-spacing-vertical: 0.25rem;
+
+    /* --- Reference defaults from Daft --- */
+    /* --daft-font-size: 100%; */
+    /* --daft-form-element-spacing-vertical: 0.375rem; */
+    /* --daft-form-element-spacing-horizontal: 0.75rem; */
+
+    /* Note: ultra-squished spacing for list buttons should be set locally in list.css */
+}

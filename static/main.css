@@ -1,0 +1,95 @@
+@charset "UTF-8";
+nav .title {
+  font-size: 38px;
+}
+
+nav .links {
+  font-size: 30px;
+}
+
+.measure {
+  margin: 0 auto;
+  /* max-width: 40rem; */
+  max-width: 30.48rem; /*  need ≈30.48rem to get 640px at 21px root font size.  */
+  /* padding-left: 10px; */ /* how to, pixyll measure doesnt have padding */
+  /* padding-right: 10px; */ /* though he has px mx stuck in places */
+  padding-left: 0.5rem; /* ~10px at 21px root */
+  padding-right: 0.5rem; /* ~10px at 21px root */
+}
+
+.add-artist-page-measure {
+  /* General page container */
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.add-artist-page {
+  /* General page container */
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Lists */
+}
+.add-artist-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.add-artist-page ul li {
+  background-color: #e9e9e9;
+  padding: 6px 10px;
+  margin-bottom: 6px; /* space between colored lines */
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-items: baseline;
+}
+.add-artist-page ul li .name-link {
+  flex: 1;
+}
+.add-artist-page ul li .right-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.add-artist-page ul li .right-group .add-btn {
+  background-color: #28a745;
+  color: white;
+}
+.add-artist-page ul li .right-group .add-btn:hover {
+  background-color: #218838;
+}
+.add-artist-page ul li .right-group .delete-local-btn {
+  background-color: #dc3545;
+  color: white;
+}
+.add-artist-page ul li .right-group .delete-local-btn:hover {
+  background-color: #c82333;
+}
+/* add bottom margin so h2 for folling form not butted up agains */
+#todo-list {
+  margin-bottom: 1.5rem;
+}
+
+.form-help {
+  font-size: 0.95em; /* this class for <small> tag which nestles up against above input line, let's make it not so small */
+}
+
+.action-row {
+  display: flex;
+  gap: 1rem; /* horizontal spacing between buttons, and link text row also, where it handles | separator char well */
+}
+
+#search-links-area {
+  margin-top: -0.25rem; /* vertical gap from preceding name input line  */
+  margin-bottom: 0.5rem;
+}
+
+/*# sourceMappingURL=main.css.map */

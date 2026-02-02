@@ -1,0 +1,30 @@
+nav .title {
+    font-size: 38px;
+}
+nav  .links {
+    font-size: 30px;
+}
+
+
+.measure {
+    margin: 0 auto;
+    /* max-width: 40rem; */
+    max-width: 30.48rem;          /*  need ≈30.48rem to get 640px at 21px root font size.  */
+    /* padding-left: 10px; */     /* how to, pixyll measure doesnt have padding */
+    /* padding-right: 10px; */    /* though he has px mx stuck in places */
+    padding-left: 0.5rem;         /* ~10px at 21px root */
+    padding-right: 0.5rem;        /* ~10px at 21px root */
+}
+
+.add-artist-page-measure {
+    /* General page container */
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+

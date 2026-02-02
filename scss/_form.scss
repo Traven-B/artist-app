@@ -1,0 +1,11 @@
+.form-help {
+    font-size: 0.95em;     /* this class for <small> tag which nestles up against above input line, let's make it not so small */
+}
+.action-row {
+  display: flex;
+  gap: 1.0rem;             /* horizontal spacing between buttons, and link text row also, where it handles | separator char well */
+}
+#search-links-area {
+  margin-top: -0.25rem;    /* vertical gap from preceding name input line  */
+  margin-bottom: 0.5rem;
+}

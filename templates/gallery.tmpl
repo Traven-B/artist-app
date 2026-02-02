@@ -1,0 +1,190 @@
+{{define "gallery_page"}}
+<!DOCTYPE html>
+<html>
+<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- alpine.js -->
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="/static/daft.css" rel="stylesheet">
+    <link href="/static/daft-overrides.css" rel="stylesheet"><!-- site-measure.css does the grid for gallery at the moment -->
+    <link href="/static/site-measure.css" rel="stylesheet">
+    <title>Gallery</title>
+  </head>
+  <div class="site">
+    <div class="site-wrap">
+      <header class="site-header">
+        <span class="site-title">Artist&nbsp;Gallery</span>
+        <nav class="site-nav">
+          <a href="/">Add Artist</a> <a href="/gallery">Gallery</a> <a href="https://www.artbreeder.com/browse?modelNames=collage.&amp;sort=trending" target="_blank">Artbreeder</a>
+        </nav>
+      </header>
+      <div class="wide-where-grid-goes">
+        <div class="grid-container">
+          {{range .Artists}}
+          <div class="grid-item" id="artist-{{.ID}}">
+            <div class="grid-item-image">
+              {{if .Thumb}}<img src="/images/{{.Thumb}}" alt="{{.Name}} thumbnail" loading="lazy">{{else}}<img src="/images/{{.ID}}.jpg" alt="{{.Name}} thumbnail" loading="lazy">{{end}}
+            </div>
+            <div class="grid-item-content">
+              <h3 class="grid-item-title"><!-- <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}"> -->
+               <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}" x-on:change="if ($el.checked) $dispatch('add-artist', {name: $el.value, id: $el.dataset.id})"> <a href="https://www.google.com/search?q=art+by+{{.Name}}" target="_blank">{{.Name}}</a></h3>
+              <p class="grid-item-description">{{.Description}}</p>
+            </div>
+          </div>{{end}}
+        </div>
+      </div>
+
+
+<!-- Alpine workspace -->
+<div x-data="galleryPrompt()">
+
+  <div style="text-align:center; padding:1rem;">
+    <button class="secondary" @click="generatePrompt()">Generate Prompt</button>
+    <button class="outline" @click="clearPrompt()">Clear</button>
+    <button class="contrast" @click="copyPrompt()">Copy Checked</button>
+  </div>
+
+  <div style="display:flex; gap:1rem; align-items:flex-start; min-height: 720px;">
+
+    <!-- bottom list -->
+    <div id="art-by-output"
+         style="flex:1; padding:1rem; background:#f0f0f0;">
+
+      <template x-for="(artist, index) in selectedArtists" :key="artist.id">
+        <div style="display:flex; align-items:center; margin-bottom:0.5rem;">
+
+          <!-- radio (focus) -->
+          <input type="radio"
+                 name="focusedArtist"
+                 :checked="focusedId === artist.id"
+                 @change="focusedId = artist.id"
+                 style="margin-right:0.4rem;">
+
+          <!-- checkbox (include) -->
+          <input type="checkbox"
+                 :checked="artist.checked"
+                 @change="toggleArtist(index)"
+                 style="margin-right:0.5rem; transform:scale(1.2);">
+
+          <a style="flex:1; display:block;"
+             :href="'#artist-' + artist.id"
+             x-text="'art by ' + artist.name + ','"></a>
+
+          <button class="secondary"
+                  @click="moveUp(index)"
+                  :disabled="index === 0"
+                  style="margin-left:0.5rem;">↑</button>
+
+          <button class="secondary"
+                  @click="moveDown(index)"
+                  :disabled="index === selectedArtists.length - 1"
+                  style="margin-left:0.25rem;">↓</button>
+        </div>
+      </template>
+    </div>
+
+    <!-- preview panel -->
+    <div style="width:460px;"
+         x-show="focusedArtist"
+         x-transition>
+
+      <!-- <img :src="focusedArtist.thumb" -->
+      <!--      style="width:100%; border-radius:6px; margin-bottom:0.5rem;"> -->
+
+      <img :src="focusedArtist.thumb"
+            style="width:120px;">
+
+      <strong x-text="focusedArtist.name"></strong>
+      <p x-text="focusedArtist.desc"></p>
+
+      <a :href="focusedArtist.google"
+         target="_blank">
+        Google artist
+      </a>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+function galleryPrompt() {
+  return {
+    selectedArtists: [],
+    focusedId: null,
+
+    get focusedArtist() {
+      return this.selectedArtists.find(a => a.id === this.focusedId)
+    },
+
+    generatePrompt() {
+      const checked = Array.from(
+        document.querySelectorAll('.artist-checkbox:checked')
+      ).map(cb => {
+        const card = cb.closest('.grid-item')
+        return {
+          id: cb.dataset.id,
+          name: cb.value,
+          checked: true,
+          thumb: card.querySelector('img')?.src,
+          desc: card.querySelector('.grid-item-description')?.innerText,
+          google: card.querySelector('a')?.href
+        }
+      })
+
+      this.selectedArtists = this.selectedArtists.filter(a =>
+        checked.some(c => c.id === a.id)
+      )
+
+      checked.forEach(c => {
+        if (!this.selectedArtists.some(a => a.id === c.id)) {
+          this.selectedArtists.push(c)
+        }
+      })
+
+      if (!this.focusedId && this.selectedArtists.length) {
+        this.focusedId = this.selectedArtists[0].id
+      }
+    },
+
+    clearPrompt() {
+      document.querySelectorAll('.artist-checkbox')
+        .forEach(cb => cb.checked = false)
+      this.selectedArtists = []
+      this.focusedId = null
+    },
+
+    moveUp(i) {
+      if (i > 0)
+        [this.selectedArtists[i-1], this.selectedArtists[i]] =
+        [this.selectedArtists[i], this.selectedArtists[i-1]]
+    },
+
+    moveDown(i) {
+      if (i < this.selectedArtists.length - 1)
+        [this.selectedArtists[i], this.selectedArtists[i+1]] =
+        [this.selectedArtists[i+1], this.selectedArtists[i]]
+    },
+
+    toggleArtist(i) {
+      this.selectedArtists[i].checked = !this.selectedArtists[i].checked
+    },
+
+    copyPrompt() {
+      const text = this.selectedArtists
+        .filter(a => a.checked)
+        .map(a => `art by ${a.name},`)
+        .join('\n')
+      navigator.clipboard.writeText(text)
+    }
+  }
+}
+</script>
+</body>
+</html>
+{{end}}

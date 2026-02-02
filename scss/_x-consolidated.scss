@@ -1,0 +1,22 @@
+.add-artist-page .artist-form form {
+  /* Multiline must be handled separately */ }
+  .add-artist-page .artist-form form input[type="text"],
+  .add-artist-page .artist-form form input[type="url"],
+  .add-artist-page .artist-form form textarea {
+    /* Big readable text */
+    font-size: 28px;
+    /* THIS is the key: controls height */
+    line-height: 1.05;
+    /* Kill Pico vertical padding */
+    padding-block: 0;
+    padding-inline: 6px;
+    /* Remove browser defaults */
+    margin: 0;
+    height: auto;
+    /* Box model sanity */
+    box-sizing: border-box;
+    border-radius: 4px; }
+  .add-artist-page .artist-form form textarea {
+    /* One visible line by default */
+    min-height: calc(1em * 1.05 + 2px);
+    resize: vertical; }

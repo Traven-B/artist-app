@@ -1,0 +1,56 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <link href="static/daft.css" rel="stylesheet" />
+    <link href="static/daft-overrides.css" rel="stylesheet" />
+    <link href="static/main.css" rel="stylesheet" />
+
+    <title>Add Artist</title>
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="container">
+    <nav>
+      <ul class="title">
+        <li><strong>Add Artist</strong></li>
+      </ul>
+      <ul class="links">
+        <li><a href="/">Add Artist</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="https://www.artbreeder.com/browse?modelNames=collage.&sort=trending" target="_blank">Artbreeder</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Measure -->
+  <div class="measure add-artist-page">
+
+    <!-- Artist To-Add List -->
+    <div>
+      <h2>Artists To Add</h2>
+      <ul id="todo-list">
+        {{template "todo_list_items" .}}
+      </ul>
+    </div>
+
+    <!-- Artist Form -->
+    <div class="artist-form">
+      <div id="artist-form">
+        {{template "artist_form" .}}
+      </div>
+    </div>
+
+  </div> <!-- end measure -->
+
+  <!-- Dialog (static for now) -->
+  {{template "confirm_dialog" .}}
+
+</body>
+</html>
+{{end}}

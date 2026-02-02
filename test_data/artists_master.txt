@@ -1,0 +1,102 @@
+id:1
+n:Oscar de la Renta
+d:De la Renta became internationally known in the 1960s as one of the couturiers who dressed Jacqueline Kennedy.
+i:https://i0.wp.com/vintageclothingguides.com/wp-content/uploads/2024/09/oscar_de_la_renta_s_legacy.jpg?fit=862%2C575&ssl=1
+t:1.jpg
+
+id:2
+n:Ilya Kuvshinov
+d:Ilya Kuvshinov  Russian illustrator based in Tokyo. character designs for Ghost in the Shell: SAC 2045 (series, bad reviews) and The Wonderland (2019)
+i:https://images.squarespace-cdn.com/content/v1/54fc8146e4b02a22841f4df7/1590062937659-CTBML8O6T7W7BRMRHSP0/fff3.jpg
+t:2.jpg
+
+id:3
+n:Hayao Miyazaki
+d:creator of Japanese animated feature films, one of the most accomplished filmmakers in the history of animation.
+i:https://cdn.i-scmp.com/sites/default/files/styles/1020x680/public/d8/images/methode/2020/10/06/61b77f02-06d1-11eb-afc8-92e0da0ef1c3_image_hires_233511.jpg?itok=XXPDfKw3&v=1601998526
+t:3.jpg
+
+id:4
+n:Daniel gerhartz
+d:born in 1965, a remarkable figure of American Kitsch
+i:https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2z5r4EOyNgVGp35FFRq5wwbMvpJ8-vxCEwlKHaqENToc3C29ar3z-4w2Z8q6PfoufUkA&usqp=CAU
+t:4.jpg
+
+id:5
+n:Henry Clive
+d:American, active 1925-1950, graphic artist and illustrator who created illustrations for The American Weekly and cover series, which were posed for by screen celebrities.
+i:https://americangallery.wordpress.com/wp-content/uploads/2012/07/tumblr_m1anj0fnrn1r04b9so1_400.jpg
+t:5.jpg
+
+id:6
+n:Frank Xavier Leyendecker
+d:commercial artist and illustrator. magazine cover art for Vogue, Vanity Fair, and Life, artwork for advertisers.
+i:https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiGyekJ7zJygJJ9xDAADDusaVOF815actlBw&s
+t:6.jpg
+
+id:7
+n:Ethel Hays
+d:cartoonist, flapper-themed comic strips, 1920s and 1930s. Art Deco style. In the 1940s and 1950s, children's book illustrator.
+i:https://s3.metapixl.com/metapixl-media/public/m/_v2/624688283165639847/c6a394f69-21cf85/y9Rtu6KFiCJh/5R3jQ3e6ThY3shRzUz0goF8GMtGkfkFb0NyG8jIN.jpg
+t:7.jpg
+
+id:8
+n:Erté
+d:20th-century Russian-born French artist and designer. fashion, graphic arts, etc.
+i:https://m.media-amazon.com/images/I/81+mxCgtliL._AC_UF1000,1000_QL80_.jpg
+t:8.jpg
+
+id:9
+n:George Barbier
+d:French illustrator of the early 20th century.
+i:https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Paquin3.jpg/502px-Paquin3.jpg
+t:9.jpg
+
+id:10
+n:Tom Bagshaw
+d:highly rendered digital painting style, portraying women, themes of fantasy, beauty, and mysticism
+i:https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjeTmqOhS_8QJB5p5GlM9HX_5cE28NP0B6xzgWxZifh6QjwsVqvP1zHk858_GBsAWBdn0HntUx2ucmaeCKzdmPGAyioKPqBijj36OYjz8Ub9E6YcK1iVzaAhnD3H0hyphenhyphenVIpLlvtEyKYQNA/s1600/chasca.jpg
+t:10.jpg
+
+id:11
+n:Picasso
+d:Cubism, Surrealism, Modern art, Picasso's Blue Period
+i:https://upload.wikimedia.org/wikipedia/en/6/60/GirlBeforeAMirror.jpg
+t:11.jpg
+
+id:12
+n:kusama
+d:surrealism, Art Brut, pop art, abstract expressionism
+i:https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTSJTl-BGZM8FXTQVqPEm3JIKVF3zQEek7oQ&s
+t:12.jpg
+
+id:13
+n:Alphonse Mucha
+d:Czech painter, illustrator, and graphic artist. Art Nouveau, symbolist
+i:https://learn.ncartmuseum.org/wp-content/uploads/2021/07/L-114-Reverie-1897-769x1024.jpg
+t:13.jpg
+
+id:14
+n:Thomas Kinkade
+d:American painter of popular realistic, pastoral, and idyllic subjects.
+i:https://thomaskinkadeca.com/wp-content/uploads/942x628.jpg
+t:14.jpg
+
+id:15
+n:Andrew Atroshenko
+d:figurative art portrays beautiful women, music and dance. Romantic impressionist.
+i:https://www.rogeryostgallery.com/fine-art/andrew-atroshenko/assets/large/into-the-light-atroshenko.jpg
+t:15.jpg
+
+id:16
+n:James Jean
+d:bold, vibrant hues
+i:https://images.squarespace-cdn.com/content/v1/5484b3b4e4b0883e5fe5efa4/1665029096877-3I8NUJHLHNXX7Y46HQE4/MAM-bouquetII-painting-72x90-lores.jpg?format=1500w
+t:16.jpg
+
+id:17
+n:Mark Ryden
+d:painter of the Lowbrow art movement. pop surrealism
+i:https://live.staticflickr.com/2375/2411531409_e0b2b89caf.jpg
+t:17.jpg
+

@@ -1,0 +1,24 @@
+# Backup dirs
+backup_*/
+
+# Production dirs
+data/
+images/
+
+# Ignore static pages saved by browser using save page as
+# this well be contents pushed by `gh-pages -d save_as_gallery/`
+/save_as_gallery
+
+# do not track the compiled binary
+artistapp
+
+# Ignore vim swap files
+.*.s[a-w][a-z]
+
+#
+.ignore
+.fdignore
+
+# should be in .git/info/exclude
+/cabinet_of_wonders/
+

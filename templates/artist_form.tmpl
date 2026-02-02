@@ -1,0 +1,37 @@
+{{define "artist_form"}}
+<h2>Add Artist Form</h2>
+
+<form id="add-artist-form" method="post" action="/add-artist" name="add-artist-form">
+
+    <label>Name: <input type="text" name="name" value="{{.FormData.Name}}">
+    {{if .FormData.NameMsg}}
+        <small class="form-help">{{.FormData.NameMsg}} </small>
+    {{end}}
+    </label>
+
+    <input type="hidden" name="original_name" value="{{.FormData.OriginalName}}">
+
+    <div id="search-links-area" class="action-row">
+        <a href="https://www.google.com/search?q=art+by+{{.FormData.Name | html}}" target="_blank">Google: {{.FormData.Name}}</a> | <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22{{.FormData.Name | html}}%22+around+twenty+words&amp;udm=50" target="_blank">AI</a> | <a href="https://www.google.com/search?tbm=isch&amp;q=art+by+{{.FormData.Name | html}}+filetype:jpg" target="_blank">JPG</a>
+    </div>
+    <div class="action-row">
+        <button type="button" id="check-duplicates-btn" hx-post="/check-name" hx-include="#add-artist-form input[name=name]" hx-target="#artist-form" hx-swap="innerHTML">Check Duplicates</button> <button type="button" id="remove-from-list-btn" hx-post="/delete-todo-form" hx-include="#add-artist-form input[name=original_name]">Delete (and Clear)</button> <button type="button" class="cancel-btn" hx-post="/cancel-add-form" hx-target="#artist-form" hx-swap="innerHTML">Cancel</button>
+    </div>
+
+    <label>Description: <textarea name="desc" rows="5">{{.FormData.Desc}}</textarea>
+    {{if .FormData.DescMsg}}
+        <small class="form-help">{{.FormData.DescMsg}}</small>
+    {{end}}
+    </label>
+
+    <label>Image URL (.jpg): <input type="text" name="img_url" value="{{.FormData.ImgURL}}">
+
+    {{if .FormData.ImgMsg}}
+        <small class="form-help">{{.FormData.ImgMsg}} </small>
+    {{end}}
+    </label>
+
+    <button type="submit" hx-post="/submit-artist-add-form" hx-include="#add-artist-form">Add Artist</button>
+</form>
+
+{{end}}

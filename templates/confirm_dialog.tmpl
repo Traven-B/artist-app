@@ -1,0 +1,30 @@
+{{define "confirm_dialog"}}
+<dialog id="test-dialog">
+  <article>
+    <header>
+      <strong>Test dialog</strong>
+    </header>
+
+    <p>
+      This dialog is only here to prove Pico styling works.
+    </p>
+
+    <footer>
+      <button
+        type="button"
+        class="secondary"
+        onclick="document.getElementById('test-dialog').close()"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        onclick="document.getElementById('test-dialog').close()"
+      >
+        OK
+      </button>
+    </footer>
+  </article>
+</dialog>
+{{end}}

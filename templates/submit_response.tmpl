@@ -1,0 +1,13 @@
+{{define "submit_response"}}
+
+<!-- OOB: replace the artist form -->
+<div id="artist-form" hx-swap-oob="true">
+  {{template "artist_form" .}}
+</div>
+
+<!-- OOB: replace ONLY the list items -->
+<ul id="todo-list" hx-swap-oob="true">
+  {{template "todo_list_items" .}}
+</ul>
+
+{{end}}
