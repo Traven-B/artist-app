@@ -1,0 +1,200 @@
+html {
+    font-size: 24px; /* Set your desired base font size */
+}
+
+html, body {
+    height: 100%; /* Ensure full height for body */
+    margin: 0; /* Remove default margin */
+}
+
+.site {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    min-height: 100vh; /* Make sure it takes at least full viewport height */
+    padding-left: 0px; /*how to */
+    padding-right: 0px;
+}
+
+header, footer {
+    width: 100%;
+    text-align: center;
+    background-color: #b4b4b4;
+    padding: 10px;
+}
+
+main {
+    flex: 1; /* Allow main content to grow and fill available space */
+    width: 100%;
+}
+
+.measure {
+    margin: 0 auto;
+    max-width: 40rem;
+    padding-left: 10px; /*how to, pixyll measure doesnt have padding */
+    padding-right: 10px; /* though he has px mx stuck in places */
+}
+
+.site-wrap {
+    flex: 1 0 auto;
+}
+
+.site-header {
+    display: flex; /* Enable flexbox */
+    flex-direction: column; /* Stack items vertically initially */
+    align-items: center; /* Center items horizontally */
+    width: 100%; /* Ensure it takes full width */
+}
+
+.site-title {
+    font-size: 1.75rem; /* Larger font size for title */
+    margin-bottom: 10px; /* Space below title (and nav) */
+}
+
+.site-nav {
+    display: flex; /* Make nav a flex container */
+    justify-content: center; /* Center nav items horizontally */
+    flex-wrap: wrap; /* Allow nav items to wrap if necessary */
+    width: 100%; /* Ensure it takes full width */
+}
+
+.site-nav a {
+    font-size: 1.0rem; /* Smaller font size for nav items */
+    margin-left: 0px; /* Space between nav items */
+    margin-right: 10px; /* Space between nav items */
+    white-space: nowrap; /* Prevent breaking of individual links if needed */
+}
+
+/* Media query for screens with a minimum width of 40em */
+@media screen and (min-width: 40em) {
+    .site-header {
+        flex-direction: row; /* Change to row layout for wider screens */
+        justify-content: space-between; /* Space out items left and right */
+        align-items: baseline; /* Align items along their baselines */
+    }
+
+    .site-title {
+        margin-right: auto; /* Push nav items to the right */
+    }
+
+    .site-nav {
+        justify-content: flex-end; /* Align nav items to the right */
+        margin-left: auto; /* Ensure they are pushed to the right */
+    }
+
+    .site-nav a {
+        margin-left: 20px; /* Increase space between nav items on wider screens */
+        line-height: normal; /* Adjust line height if necessary */
+    }
+}
+.artist-list {
+    list-style-type: none;
+    padding: 0;
+}
+.artist-list li {
+    margin-bottom: 10px;
+}
+
+input[type="text"], textarea {
+    height: 40px;
+    width: 40em;
+    font-size: 22px; /* Adjust this value as needed */
+    padding: 5px 10px;
+}
+
+.extra {
+    margin-bottom: 3.5rem;
+}
+
+@media (min-width: 40em) {
+    .extra {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* gallery grid follows */
+.wide-where-grid-goes { /* TODO: standardize the padding across this class and the .measure class  */
+    width: 100%;
+    padding: 1rem;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 0.5rem;
+}
+
+.grid-item {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    align-items: flex-start; /* Align items to the top */
+}
+
+.grid-item-image {
+    flex: 0 0 120px; /* Fixed width for image container */
+}
+
+.grid-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.grid-item-content {
+    flex: 1;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-item-title {
+    font-size: 0.9rem;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.grid-item-description {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+}
+
+
+
+#art-by-output {
+    flex: 1;
+    padding: 1rem;
+    background: #f0f0f0;
+    overflow-y: auto;   /* scroll if content is too tall */
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
+#art-by-output + div[x-show] {
+    width: 260px;
+    overflow-y: auto;   /* scroll text if too tall */
+    box-sizing: border-box;
+}
+
+/* @media (min-width: 40em) { */
+/* @media (min-width: 52em) { */
+/* @media (min-width: 64em) { */
+
+@media (min-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .grid-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

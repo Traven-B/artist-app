@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="index_files/htmx.min.js"></script>
+
+    <link href="index_files/daft.css" rel="stylesheet">
+    <link href="index_files/daft-overrides.css" rel="stylesheet">
+    <link href="index_files/main.css" rel="stylesheet">
+
+    <title>Add Artist</title>
+<style>                      .htmx-indicator{opacity:0}                      .htmx-request .htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}                      .htmx-request.htmx-indicator{opacity:1; transition: opacity 200ms ease-in;}                    </style></head>
+<body>
+
+
+  <header class="container">
+    <nav>
+      <ul class="title">
+        <li><strong>Add Artist</strong></li>
+      </ul>
+      <ul class="links">
+        <li><a href="index.html">Add Artist</a></li>
+        <li><a href="Gallery.html">Gallery</a></li>
+        <li><a href="https://www.artbreeder.com/browse?modelNames=collage.&amp;sort=trending" target="_blank">Artbreeder</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <div class="measure add-artist-page">
+
+
+    <div>
+      <h2>Artists To Add</h2>
+      <ul id="todo-list" hx-swap-oob="true">
+
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Oscar%20de%20la%20Renta" target="_blank">Oscar de la Renta</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Oscar%20de%20la%20Renta%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Oscar de la Renta&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Ilya%20Kuvshinov" target="_blank">Ilya Kuvshinov</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Ilya%20Kuvshinov%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Ilya Kuvshinov&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Hayao%20Miyazaki" target="_blank">Hayao Miyazaki</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Hayao%20Miyazaki%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Hayao Miyazaki&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Stanley%20artgerm" target="_blank">Stanley artgerm</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Stanley%20artgerm%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Stanley artgerm&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+charlie%20bowater" target="_blank">charlie bowater</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22charlie%20bowater%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;charlie bowater&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+WLOP" target="_blank">WLOP</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22WLOP%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;WLOP&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Rachel%20Ruysch" target="_blank">Rachel Ruysch</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Rachel%20Ruysch%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Rachel Ruysch&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Jean-Michel%20Basquiat" target="_blank">Jean-Michel Basquiat</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Jean-Michel%20Basquiat%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Jean-Michel Basquiat&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Ikenaga%20Yasunari" target="_blank">Ikenaga Yasunari</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Ikenaga%20Yasunari%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Ikenaga Yasunari&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Tomoko%20Aran" target="_blank">Tomoko Aran</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Tomoko%20Aran%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Tomoko Aran&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Trevor%20Brown" target="_blank">Trevor Brown</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Trevor%20Brown%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Trevor Brown&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Roy%20Lichtenstein" target="_blank">Roy Lichtenstein</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Roy%20Lichtenstein%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Roy Lichtenstein&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Patrick%20Nagel" target="_blank">Patrick Nagel</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Patrick%20Nagel%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Patrick Nagel&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Albrecht%20D%c3%bcrer" target="_blank">Albrecht Dürer</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Albrecht%20D%c3%bcrer%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Albrecht Dürer&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Atey%20Ghailan" target="_blank">Atey Ghailan</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Atey%20Ghailan%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Atey Ghailan&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Hieronymus%20Bosch" target="_blank">Hieronymus Bosch</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Hieronymus%20Bosch%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Hieronymus Bosch&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Pieter%20Bruegel%20the%20Elder" target="_blank">Pieter Bruegel the Elder</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Pieter%20Bruegel%20the%20Elder%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Pieter Bruegel the Elder&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Sandro%20Botticell" target="_blank">Sandro Botticell</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Sandro%20Botticell%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Sandro Botticell&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Henri%20de%20Toulouse-Lautrec" target="_blank">Henri de Toulouse-Lautrec</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Henri%20de%20Toulouse-Lautrec%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Henri de Toulouse-Lautrec&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Edgar%20Degas" target="_blank">Edgar Degas</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Edgar%20Degas%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Edgar Degas&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Egon%20Schiele" target="_blank">Egon Schiele</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Egon%20Schiele%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Egon Schiele&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+sho%20murase" target="_blank">sho murase</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22sho%20murase%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;sho murase&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Yuko%20Shimizu" target="_blank">Yuko Shimizu</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Yuko%20Shimizu%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Yuko Shimizu&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+<li>
+    <span class="name-link">
+        <a href="https://www.google.com/search?q=art+by+Reika%20Iwami" target="_blank">Reika Iwami</a>
+    </span>
+    <span class="right-group">
+        <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Reika%20Iwami%22+around+twenty+words&amp;udm=50" target="_blank" class="ai-link">AI</a>
+
+        <button class="add-btn" hx-post="/populate-form" hx-vals="{&quot;name&quot;: &quot;Reika Iwami&quot;}" hx-target="#artist-form" hx-swap="innerHTML">
+            Add
+        </button>
+
+        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+            Delete
+        </button>
+    </span>
+</li>
+
+
+</ul>
+    </div>
+
+
+    <div class="artist-form">
+      <div id="artist-form" hx-swap-oob="true">
+
+<h2>Add Artist Form</h2>
+
+<form id="add-artist-form" method="post" action="/add-artist" name="add-artist-form">
+
+    <label>Name: <input type="text" name="name" value="Reika Iwami">
+
+    </label>
+
+    <input type="hidden" name="original_name" value="Reika Iwami">
+
+    <div id="search-links-area" class="action-row">
+        <a href="https://www.google.com/search?q=art+by+Reika%20Iwami" target="_blank">Google: Reika Iwami</a> | <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Reika%20Iwami%22+around+twenty+words&amp;udm=50" target="_blank">AI</a> | <a href="https://www.google.com/search?tbm=isch&amp;q=art+by+Reika%20Iwami+filetype:jpg" target="_blank">JPG</a>
+    </div>
+    <div class="action-row">
+        <button type="button" id="check-duplicates-btn" hx-post="/check-name" hx-include="#add-artist-form input[name=name]" hx-target="#artist-form" hx-swap="innerHTML">Check Duplicates</button> <button type="button" id="remove-from-list-btn" hx-post="/delete-todo-form" hx-include="#add-artist-form input[name=original_name]">Delete (and Clear)</button> <button type="button" class="cancel-btn" hx-post="/cancel-add-form" hx-target="#artist-form" hx-swap="innerHTML">Cancel</button>
+    </div>
+
+    <label>Description: <textarea name="desc" rows="5">Reika Iwami
+combined traditional Japanese woodblock techniques (sosaku hanga) with
+modern abstraction. Her style features heavily grained wood textures,
+embossed patterns, and gold or silver leaf to evoke water and organic
+landscapes</textarea>
+
+    </label>
+
+    <label>Image URL (.jpg): <input type="text" name="img_url">
+
+
+        <small class="form-help">Image URL is required. </small>
+
+    </label>
+
+    <button type="submit" hx-post="/submit-artist-add-form" hx-include="#add-artist-form">Add Artist</button>
+</form>
+
+
+</div>
+    </div>
+
+  </div>
+
+
+
+<dialog id="test-dialog">
+  <article>
+    <header>
+      <strong>Test dialog</strong>
+    </header>
+
+    <p>
+      This dialog is only here to prove Pico styling works.
+    </p>
+
+    <footer>
+      <button type="button" class="secondary" onclick="document.getElementById('test-dialog').close()">
+        Cancel
+      </button>
+
+      <button type="button" onclick="document.getElementById('test-dialog').close()">
+        OK
+      </button>
+    </footer>
+  </article>
+</dialog>
+
+
+
+
+</body></html>
