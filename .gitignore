@@ -22,3 +22,6 @@ artistapp
 # should be in .git/info/exclude
 /cabinet_of_wonders/
 
+# gh-pages js thing stuff
+package.json
+node_modules/
