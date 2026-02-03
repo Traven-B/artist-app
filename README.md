@@ -3,6 +3,16 @@
 A small Go + HTMX + Alpine.js app for collecting artist names, building a gallery,
 and generating “art by …” prompt fragments for tools like Artbreeder.
 
+The 'output' of the app is to have the Gallery page generate text like:
+
+```
+art by Tom Bagshaw,
+art by Picasso,
+```
+
+This can be copied to the clipboard and then pasted into an Artbreeder prompt.
+
+
 ## Demo (GitHub Pages)
 
 - **Gallery demo (works):** \\
@@ -224,7 +234,7 @@ art by Tom Bagshaw,
 art by Picasso,
 ```
 
-This can be copied directly into an Artbreeder prompt.
+This can be copied to the clipboard and then pasted into an Artbreeder prompt.
 
 
 ### Working list + copy flow
