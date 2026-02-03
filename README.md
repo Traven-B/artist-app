@@ -6,7 +6,7 @@ and generating “art by …” prompt fragments for tools like Artbreeder.
 ## Demo (GitHub Pages)
 
 - **Gallery demo (works):** \\
-  <https://traven-b.github.io/artist-app/>
+  <https://traven-b.github.io/artist-app/Gallery.html>
 
 - **Index / add-artists page (working except for delete buttons.):** \\
   <https://traven-b.github.io/artist-app/index.html>
@@ -17,7 +17,7 @@ Notes:
 - On the index page,
     - when served by app, the **Delete** buttons are not wired up.\\
       add name to form, do delete (and clear) button to remove name in list.
-    - when served by gh-pages, the example index page has working google search links.
+    - when served by gh-pages, the example index page only has working google search links.
 - There is no update/edit flow and no delete for existing gallery entries.
 - This is good enough for the intended workflow.
 
