@@ -178,6 +178,52 @@ func cancelAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// htmx handler: show confirmation dialog for deleting from to-do list
+func confirmDeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	data := struct {
+		Name string
+	}{Name: name}
+	err := templates.ExecuteTemplate(w, "confirm_delete_content", data)
+	if err != nil {
+		http.Error(w, "Template error: "+err.Error(), 500)
+	}
+}
+
+// htmx handler: actually delete from to-do list and return updated list items
+func deleteTodoItemHandler(w http.ResponseWriter, r *http.Request) {
+	nameToDelete := strings.TrimSpace(r.FormValue("name"))
+	if nameToDelete == "" {
+		http.Error(w, "Name is required", 400)
+		return
+	}
+
+	// Remove name from to-do list
+	newList := make([]string, 0, len(globalToAddList))
+	for _, name := range globalToAddList {
+		if !strings.EqualFold(name, nameToDelete) {
+			newList = append(newList, name)
+		}
+	}
+	globalToAddList = newList
+
+	// Save list
+	err := os.WriteFile(filepath.Join(dataDir, "artists_to_add.txt"), []byte(strings.Join(globalToAddList, "\n")+"\n"), 0644)
+	if err != nil {
+		http.Error(w, "Failed to save to-do list", 500)
+		return
+	}
+
+	// Return updated list items (inner HTML of <ul>)
+	data := AddArtistPageData{
+		ToAdd: globalToAddList,
+	}
+	err = templates.ExecuteTemplate(w, "todo_list_items", data)
+	if err != nil {
+		http.Error(w, "Template error: "+err.Error(), 500)
+	}
+}
+
 // htmx handler: delete name from to-do list based on original name inside form
 func deleteTodoFormHandler(w http.ResponseWriter, r *http.Request) {
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
@@ -395,6 +441,8 @@ func main() {
 	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler)
 	http.HandleFunc("/cancel-add-form", cancelAddFormHandler)
 	http.HandleFunc("/submit-artist-add-form", submitArtistAddFormHandler)
+	http.HandleFunc("/confirm-delete-todo", confirmDeleteTodoHandler)
+	http.HandleFunc("/delete-todo-item", deleteTodoItemHandler)
 
 	// main.go (add before http.ListenAndServe)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

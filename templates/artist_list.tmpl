@@ -18,7 +18,11 @@
 
         <button
             class="delete-local-btn"
-            onclick="document.getElementById('test-dialog').showModal()">
+            hx-post="/confirm-delete-todo"
+            hx-vals='{"name": "{{.}}"}'
+            hx-target="#test-dialog"
+            hx-swap="innerHTML"
+            hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>

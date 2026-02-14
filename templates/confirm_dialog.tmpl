@@ -1,12 +1,15 @@
 {{define "confirm_dialog"}}
-<dialog id="test-dialog">
+<dialog id="test-dialog"></dialog>
+{{end}}
+
+{{define "confirm_delete_content"}}
   <article>
     <header>
-      <strong>Test dialog</strong>
+      <strong>Confirm Deletion</strong>
     </header>
 
     <p>
-      This dialog is only here to prove Pico styling works.
+      Are you sure you want to delete <strong>{{.Name}}</strong> from the to-do list?
     </p>
 
     <footer>
@@ -20,11 +23,14 @@
 
       <button
         type="button"
+        hx-post="/delete-todo-item"
+        hx-vals='{"name": "{{.Name}}"}'
+        hx-target="#todo-list"
+        hx-swap="innerHTML"
         onclick="document.getElementById('test-dialog').close()"
       >
-        OK
+        Delete
       </button>
     </footer>
   </article>
-</dialog>
 {{end}}
