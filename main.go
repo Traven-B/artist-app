@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/disintegration/imaging"
 )
@@ -344,7 +345,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	newID := maxID + 1
-	thumbFile := strconv.Itoa(newID) + ".jpg"
+	thumbFile := fmt.Sprintf("%d-%d.jpg", newID, time.Now().Unix())
 
 	// Try to create thumbnail
 	if !thumbnailExists(thumbFile) {
