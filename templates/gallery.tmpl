@@ -61,10 +61,9 @@
                  @change="$store.promptStore.focusedId = artist.id"
                  style="margin-right:0.4rem;">
 
-          <!-- checkbox (include) -->
+          <!-- checkbox (include in prompt) -->
           <input type="checkbox"
-                 :checked="artist.checked"
-                 @change="$store.promptStore.toggle(artist)"
+                 x-model="artist.checked"
                  style="margin-right:0.5rem; transform:scale(1.2);">
 
           <a style="flex:1; display:block;"
@@ -80,6 +79,10 @@
                   @click="$store.promptStore.moveDown(index)"
                   :disabled="index === $store.promptStore.selectedArtists.length - 1"
                   style="margin-left:0.25rem;">↓</button>
+
+          <button class="secondary"
+                  @click="$store.promptStore.remove(artist.id)"
+                  style="margin-left:0.25rem; color:red;">X</button>
         </div>
       </template>
     </div>
