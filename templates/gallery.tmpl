@@ -38,12 +38,11 @@
 
 
 <!-- Alpine workspace -->
-<div x-data="galleryPrompt()" @artist-deleted.window="selectedArtists = selectedArtists.filter(a => a.id !== $event.detail.id)">
+<div x-data @artist-deleted.window="$store.promptStore.remove($event.detail.id)">
 
   <div style="text-align:center; padding:1rem;">
-    <button class="secondary" @click="generatePrompt()">Generate Prompt</button>
-    <button class="outline" @click="clearPrompt()">Clear</button>
-    <button class="contrast" @click="copyPrompt()">Copy Checked</button>
+    <button class="outline" @click="$store.promptStore.clear()">Clear All</button>
+    <button class="contrast" @click="$store.promptStore.copyPrompt()">Copy Checked</button>
   </div>
 
   <div style="display:flex; gap:1rem; align-items:flex-start; min-height: 720px;">
@@ -52,20 +51,20 @@
     <div id="art-by-output"
          style="flex:1; padding:1rem; background:#f0f0f0;">
 
-      <template x-for="(artist, index) in selectedArtists" :key="artist.id">
+      <template x-for="(artist, index) in $store.promptStore.selectedArtists" :key="artist.id">
         <div style="display:flex; align-items:center; margin-bottom:0.5rem;">
 
           <!-- radio (focus) -->
           <input type="radio"
                  name="focusedArtist"
-                 :checked="focusedId === artist.id"
-                 @change="focusedId = artist.id"
+                 :checked="$store.promptStore.focusedId === artist.id"
+                 @change="$store.promptStore.focusedId = artist.id"
                  style="margin-right:0.4rem;">
 
           <!-- checkbox (include) -->
           <input type="checkbox"
                  :checked="artist.checked"
-                 @change="toggleArtist(index)"
+                 @change="$store.promptStore.toggle(artist)"
                  style="margin-right:0.5rem; transform:scale(1.2);">
 
           <a style="flex:1; display:block;"
@@ -73,13 +72,13 @@
              x-text="'art by ' + artist.name + ','"></a>
 
           <button class="secondary"
-                  @click="moveUp(index)"
+                  @click="$store.promptStore.moveUp(index)"
                   :disabled="index === 0"
                   style="margin-left:0.5rem;">↑</button>
 
           <button class="secondary"
-                  @click="moveDown(index)"
-                  :disabled="index === selectedArtists.length - 1"
+                  @click="$store.promptStore.moveDown(index)"
+                  :disabled="index === $store.promptStore.selectedArtists.length - 1"
                   style="margin-left:0.25rem;">↓</button>
         </div>
       </template>
@@ -87,19 +86,16 @@
 
     <!-- preview panel -->
     <div style="width:460px;"
-         x-show="focusedArtist"
+         x-show="$store.promptStore.focusedArtist"
          x-transition>
 
-      <!-- <img :src="focusedArtist.thumb" -->
-      <!--      style="width:100%; border-radius:6px; margin-bottom:0.5rem;"> -->
-
-      <img :src="focusedArtist.thumb"
+      <img :src="$store.promptStore.focusedArtist?.thumb"
             style="width:120px;">
 
-      <strong x-text="focusedArtist.name"></strong>
-      <p x-text="focusedArtist.desc"></p>
+      <strong x-text="$store.promptStore.focusedArtist?.name"></strong>
+      <p x-text="$store.promptStore.focusedArtist?.desc"></p>
 
-      <a :href="focusedArtist.google"
+      <a :href="$store.promptStore.focusedArtist?.google"
          target="_blank">
         Google artist
       </a>
@@ -113,8 +109,8 @@
 
 
 <script>
-function galleryPrompt() {
-  return {
+document.addEventListener('alpine:init', () => {
+  Alpine.store('promptStore', {
     selectedArtists: [],
     focusedId: null,
 
@@ -122,57 +118,37 @@ function galleryPrompt() {
       return this.selectedArtists.find(a => a.id === this.focusedId)
     },
 
-    generatePrompt() {
-      const checked = Array.from(
-        document.querySelectorAll('.artist-checkbox:checked')
-      ).map(cb => {
-        const card = cb.closest('.grid-item')
-        return {
-          id: cb.dataset.id,
-          name: cb.value,
-          checked: true,
-          thumb: card.querySelector('img')?.src,
-          desc: card.querySelector('.grid-item-description')?.innerText,
-          google: card.querySelector('a')?.href
+    toggle(artist) {
+      const idx = this.selectedArtists.findIndex(a => a.id === artist.id)
+      if (idx === -1) {
+        this.selectedArtists.push({ ...artist, checked: true })
+        if (!this.focusedId) this.focusedId = artist.id
+      } else {
+        this.selectedArtists.splice(idx, 1)
+        if (this.focusedId === artist.id) {
+          this.focusedId = this.selectedArtists.length ? this.selectedArtists[0].id : null
         }
-      })
-
-      this.selectedArtists = this.selectedArtists.filter(a =>
-        checked.some(c => c.id === a.id)
-      )
-
-      checked.forEach(c => {
-        if (!this.selectedArtists.some(a => a.id === c.id)) {
-          this.selectedArtists.push(c)
-        }
-      })
-
-      if (!this.focusedId && this.selectedArtists.length) {
-        this.focusedId = this.selectedArtists[0].id
       }
     },
 
-    clearPrompt() {
-      document.querySelectorAll('.artist-checkbox')
-        .forEach(cb => cb.checked = false)
-      this.selectedArtists = []
-      this.focusedId = null
+    remove(id) {
+      this.selectedArtists = this.selectedArtists.filter(a => a.id !== id)
+      if (this.focusedId === id) {
+        this.focusedId = this.selectedArtists.length ? this.selectedArtists[0].id : null
+      }
     },
 
     moveUp(i) {
-      if (i > 0)
-        [this.selectedArtists[i-1], this.selectedArtists[i]] =
-        [this.selectedArtists[i], this.selectedArtists[i-1]]
+      if (i > 0) [this.selectedArtists[i-1], this.selectedArtists[i]] = [this.selectedArtists[i], this.selectedArtists[i-1]]
     },
 
     moveDown(i) {
-      if (i < this.selectedArtists.length - 1)
-        [this.selectedArtists[i], this.selectedArtists[i+1]] =
-        [this.selectedArtists[i+1], this.selectedArtists[i]]
+      if (i < this.selectedArtists.length - 1) [this.selectedArtists[i], this.selectedArtists[i+1]] = [this.selectedArtists[i+1], this.selectedArtists[i]]
     },
 
-    toggleArtist(i) {
-      this.selectedArtists[i].checked = !this.selectedArtists[i].checked
+    clear() {
+      this.selectedArtists = []
+      this.focusedId = null
     },
 
     copyPrompt() {
@@ -182,22 +158,35 @@ function galleryPrompt() {
         .join('\n')
       navigator.clipboard.writeText(text)
     }
-  }
-}
+  })
+})
 </script>
 </body>
 </html>
 {{end}}
 
 {{define "grid_item"}}
-<div class="grid-item" id="artist-{{.ID}}" x-data="{ showActions: false }">
+<div class="grid-item" id="artist-{{.ID}}" 
+     x-data="{ 
+        showActions: false,
+        artist: {
+            id: '{{.ID}}',
+            name: '{{.Name}}',
+            desc: '{{.Description}}',
+            thumb: '/images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}',
+            google: 'https://www.google.com/search?q=art+by+{{.Name | urlquery}}'
+        }
+     }">
   <div class="grid-item-image">
-    <img src="/images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}" alt="{{.Name}}" loading="lazy">
+    <img :src="artist.thumb" :alt="artist.name" loading="lazy">
   </div>
   <div class="grid-item-content">
     <h3 class="grid-item-title">
-      <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}" x-on:change="if ($el.checked) $dispatch('add-artist', {name: $el.value, id: $el.dataset.id})">
-      <a href="https://www.google.com/search?q=art+by+{{.Name}}" target="_blank">{{.Name}}</a>
+      <input type="checkbox" 
+             class="artist-checkbox"
+             :checked="$store.promptStore.selectedArtists.some(a => a.id === artist.id)"
+             @change="$store.promptStore.toggle(artist)">
+      <a :href="artist.google" target="_blank">{{.Name}}</a>
     </h3>
     <p class="grid-item-description">{{.Description}}
       <a href="#" @click.prevent="showActions = !showActions" class="action-trigger">⋯</a>
