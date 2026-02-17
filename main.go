@@ -224,6 +224,31 @@ func deleteTodoItemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// htmx handler: decide whether to show confirmation dialog or delete directly
+func confirmDeleteTodoFormHandler(w http.ResponseWriter, r *http.Request) {
+	originalName := strings.TrimSpace(r.FormValue("original_name"))
+
+	if originalName == "" {
+		// No name to delete, just clear form by calling deleteTodoFormHandler directly
+		deleteTodoFormHandler(w, r)
+		return
+	}
+
+	// Name exists → show confirmation dialog
+	data := struct {
+		Name string
+	}{
+		Name: originalName,
+	}
+
+	// err := templates.ExecuteTemplate(w, "confirm_delete_content", data)
+	err := templates.ExecuteTemplate(w, "confirm_delete_and_clear_content", data)
+	if err != nil {
+		http.Error(w, "Template error: "+err.Error(), 500)
+		return
+	}
+}
+
 // htmx handler: delete name from to-do list based on original name inside form
 func deleteTodoFormHandler(w http.ResponseWriter, r *http.Request) {
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
@@ -438,7 +463,8 @@ func main() {
 	http.HandleFunc("/gallery", galleryPage)
 	http.HandleFunc("/populate-form", populateFormHandler)
 	http.HandleFunc("/check-name", checkNameHandler)
-	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler)
+	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler) // we may still call this with htmxx but from are you sure dialog
+	http.HandleFunc("/confirm-delete-todo-form", confirmDeleteTodoFormHandler)
 	http.HandleFunc("/cancel-add-form", cancelAddFormHandler)
 	http.HandleFunc("/submit-artist-add-form", submitArtistAddFormHandler)
 	http.HandleFunc("/confirm-delete-todo", confirmDeleteTodoHandler)

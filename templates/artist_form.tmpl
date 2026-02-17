@@ -15,7 +15,33 @@
         <a href="https://www.google.com/search?q=art+by+{{.FormData.Name | html}}" target="_blank">Google: {{.FormData.Name}}</a> | <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22{{.FormData.Name | html}}%22+around+twenty+words&amp;udm=50" target="_blank">AI</a> | <a href="https://www.google.com/search?tbm=isch&amp;q=art+by+{{.FormData.Name | html}}+filetype:jpg" target="_blank">JPG</a>
     </div>
     <div class="action-row">
-        <button type="button" id="check-duplicates-btn" hx-post="/check-name" hx-include="#add-artist-form input[name=name]" hx-target="#artist-form" hx-swap="innerHTML">Check Duplicates</button> <button type="button" id="remove-from-list-btn" hx-post="/delete-todo-form" hx-include="#add-artist-form input[name=original_name]">Delete (and Clear)</button> <button type="button" class="cancel-btn" hx-post="/cancel-add-form" hx-target="#artist-form" hx-swap="innerHTML">Cancel</button>
+        <button type="button"
+            id="check-duplicates-btn"
+            hx-post="/check-name"
+            hx-include="#add-artist-form input[name=name]"
+            hx-target="#artist-form"
+            hx-swap="innerHTML">
+            Check Duplicates
+        </button>
+
+        <button
+            type="button"
+            id="remove-from-list-btn"
+            hx-post="/confirm-delete-todo-form"
+            hx-include="#add-artist-form input[name=original_name]"
+            hx-target="#test-dialog"
+            hx-swap="innerHTML"
+            hx-on::after-request="document.getElementById('test-dialog').showModal()">
+            Delete (and Clear)
+        </button>
+
+        <button type="button"
+            class="cancel-btn"
+            hx-post="/cancel-add-form"
+            hx-target="#artist-form"
+            hx-swap="innerHTML">
+            Cancel
+        </button>
     </div>
 
     <label>Description: <textarea name="desc" rows="5">{{.FormData.Desc}}</textarea>

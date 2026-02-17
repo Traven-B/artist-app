@@ -25,3 +25,4 @@ artistapp
 # gh-pages js thing stuff
 package.json
 node_modules/
+.aider*

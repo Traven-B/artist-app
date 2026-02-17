@@ -34,3 +34,39 @@
     </footer>
   </article>
 {{end}}
+
+
+{{define "confirm_delete_and_clear_content"}}
+<article>
+  <header>
+    <strong>Confirm Delete and Clear</strong>
+  </header>
+
+  <p>
+    Are you sure you want to delete "<strong>{{.Name}}</strong>" from the to-do list and clear the form?
+  </p>
+
+  <footer>
+    <!-- Cancel just closes the dialog -->
+    <button
+      type="button"
+      class="secondary"
+      onclick="document.getElementById('test-dialog').close()"
+    >
+      Cancel
+    </button>
+
+    <!-- OK calls the existing deleteTodoFormHandler -->
+    <button
+      type="button"
+      hx-post="/delete-todo-form"
+      hx-vals='{"original_name": "{{.Name}}"}'
+      hx-target="#artist-form"
+      hx-swap="none"
+      onclick="document.getElementById('test-dialog').close()"
+    >
+      OK
+    </button>
+  </footer>
+</article>
+{{end}}
