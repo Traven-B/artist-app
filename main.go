@@ -412,6 +412,93 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	_ = templates.ExecuteTemplate(w, "submit_response", data)
 }
 
+func deleteArtistHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/artists/delete/")
+	id, _ := strconv.Atoi(idStr)
+
+	for i, rec := range globalMasterList {
+		if rec.ID == id {
+			// Remove the record
+			globalMasterList = append(globalMasterList[:i], globalMasterList[i+1:]...)
+			break
+		}
+	}
+
+	// Save the updated master list
+	saveMasterListInternal()
+
+	// Return 200 OK with empty body. hx-swap="outerHTML" will remove the element.
+	w.WriteHeader(http.StatusOK)
+}
+
+func editArtistHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/artists/edit/")
+	id, _ := strconv.Atoi(idStr)
+
+	var artist ArtistRecord
+	found := false
+	for _, rec := range globalMasterList {
+		if rec.ID == id {
+			artist = rec
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		http.Error(w, "Artist not found", 404)
+		return
+	}
+
+	err := templates.ExecuteTemplate(w, "edit_form_content", artist)
+	if err != nil {
+		http.Error(w, "Template error: "+err.Error(), 500)
+	}
+}
+
+func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/artists/update/")
+	id, _ := strconv.Atoi(idStr)
+
+	name := strings.TrimSpace(r.FormValue("name"))
+	desc := strings.TrimSpace(r.FormValue("desc"))
+	imgURL := strings.TrimSpace(r.FormValue("img_url"))
+
+	for i, rec := range globalMasterList {
+		if rec.ID == id {
+			globalMasterList[i].Name = name
+			globalMasterList[i].Description = desc
+
+			// If URL changed, fetch new image and generate new thumb name for cache busting
+			if imgURL != "" && imgURL != globalMasterList[i].ImgURL {
+				globalMasterList[i].ImgURL = imgURL
+				newThumb := fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
+				if err := fetchAndCreateThumbnail(imgURL, newThumb); err == nil {
+					globalMasterList[i].Thumb = newThumb
+				}
+			}
+
+			saveMasterListInternal()
+
+			// Return just the updated grid item fragment
+			err := templates.ExecuteTemplate(w, "grid_item", globalMasterList[i])
+			if err != nil {
+				http.Error(w, "Template error: "+err.Error(), 500)
+			}
+			return
+		}
+	}
+}
+
+// Helper to avoid code duplication
+func saveMasterListInternal() {
+	var builder strings.Builder
+	for _, rec := range globalMasterList {
+		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\ni:%s\nt:%s\n\n", rec.ID, rec.Name, rec.Description, rec.ImgURL, rec.Thumb))
+	}
+	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
+}
+
 // --- Main ---
 
 func main() {
@@ -470,6 +557,9 @@ func main() {
 	http.HandleFunc("/submit-artist-add-form", submitArtistAddFormHandler)
 	http.HandleFunc("/confirm-delete-todo", confirmDeleteTodoHandler)
 	http.HandleFunc("/delete-todo-item", deleteTodoItemHandler)
+	http.HandleFunc("/artists/delete/", deleteArtistHandler)
+	http.HandleFunc("/artists/edit/", editArtistHandler)
+	http.HandleFunc("/artists/update/", updateArtistHandler)
 
 	// main.go (add before http.ListenAndServe)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

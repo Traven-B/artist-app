@@ -1,7 +1,7 @@
 {{define "gallery_page"}}
 <!DOCTYPE html>
 <html>
-<body>
+<body hx-on::after-request="if(event.detail.pathInfo.requestPath.includes('delete')) { $dispatch('artist-deleted', {id: event.detail.pathInfo.requestPath.split('/').pop()}) }">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- alpine.js -->
@@ -21,42 +21,24 @@
         </nav>
       </header>
       <div class="wide-where-grid-goes">
-        <div class="grid-container">
+        <div class="grid-container" id="gallery-grid">
           {{range .Artists}}
-          <div class="grid-item" id="artist-{{.ID}}" x-data="{ showActions: false }">
-            <div class="grid-item-image">
-              {{if .Thumb}}<img src="/images/{{.Thumb}}" alt="{{.Name}} thumbnail" loading="lazy">{{else}}<img src="/images/{{.ID}}.jpg" alt="{{.Name}} thumbnail" loading="lazy">{{end}}
-            </div>
-            <div class="grid-item-content">
-              <h3 class="grid-item-title"><!-- <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}"> -->
-               <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}" x-on:change="if ($el.checked) $dispatch('add-artist', {name: $el.value, id: $el.dataset.id})"> <a href="https://www.google.com/search?q=art+by+{{.Name}}" target="_blank">{{.Name}}</a></h3>
-              <p class="grid-item-description">{{.Description}}
-                <a href="#" @click.prevent="showActions = !showActions" class="action-trigger" title="Actions">⋯</a>
-
-              </p>
-              <div x-show="showActions" x-transition
-                   @click.away="showActions = false"
-                   class="action-links">
-                <a href="#" hx-get="/artists/{{.ID}}/edit"
-                   hx-target="#edit-form"
-                   hx-swap="innerHTML"
-                   class="action-link">edit</a><br>
-                <a href="#" hx-post="/artists/{{.ID}}/delete"
-                   hx-target="closest .grid-item"
-                   hx-swap="outerHTML"
-                   hx-confirm="Delete {{.Name}}?"
-                   class="action-link">delete</a>
-              </div>
-            </div>
-          </div>{{end}}
-
-
+            {{template "grid_item" .}}
+          {{end}}
         </div>
       </div>
 
+      <!-- Add this: Persistent Edit Form Area -->
+      <section id="edit-section" style="padding: 2rem; background: #f9f9f9; border-top: 1px solid #ccc; margin-top: 2rem;">
+        <h3>Edit Artist Details</h3>
+        <div id="edit-form-target">
+            <p>Click "edit" on a card above to load its data here.</p>
+        </div>
+      </section>
+
 
 <!-- Alpine workspace -->
-<div x-data="galleryPrompt()">
+<div x-data="galleryPrompt()" @artist-deleted.window="selectedArtists = selectedArtists.filter(a => a.id !== $event.detail.id)">
 
   <div style="text-align:center; padding:1rem;">
     <button class="secondary" @click="generatePrompt()">Generate Prompt</button>
@@ -205,4 +187,47 @@ function galleryPrompt() {
 </script>
 </body>
 </html>
+{{end}}
+
+{{define "grid_item"}}
+<div class="grid-item" id="artist-{{.ID}}" x-data="{ showActions: false }">
+  <div class="grid-item-image">
+    <img src="/images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}" alt="{{.Name}}" loading="lazy">
+  </div>
+  <div class="grid-item-content">
+    <h3 class="grid-item-title">
+      <input type="checkbox" class="artist-checkbox" value="{{.Name}}" data-id="{{.ID}}" x-on:change="if ($el.checked) $dispatch('add-artist', {name: $el.value, id: $el.dataset.id})">
+      <a href="https://www.google.com/search?q=art+by+{{.Name}}" target="_blank">{{.Name}}</a>
+    </h3>
+    <p class="grid-item-description">{{.Description}}
+      <a href="#" @click.prevent="showActions = !showActions" class="action-trigger">⋯</a>
+    </p>
+    <div x-show="showActions" @click.away="showActions = false" class="action-links">
+      <a href="#edit-section" 
+         hx-get="/artists/edit/{{.ID}}" 
+         hx-target="#edit-form-target" 
+         class="action-link">edit</a><br>
+      <a href="#" 
+         hx-post="/artists/delete/{{.ID}}" 
+         hx-target="closest .grid-item" 
+         hx-swap="outerHTML" 
+         class="action-link" 
+         style="color: red;">delete</a>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{define "edit_form_content"}}
+<form hx-post="/artists/update/{{.ID}}" hx-target="#artist-{{.ID}}" hx-swap="outerHTML">
+    <div style="display: grid; gap: 1rem;">
+        <label>Name: <input type="text" name="name" value="{{.Name}}"></label>
+        <label>Description: <textarea name="desc" rows="3">{{.Description}}</textarea></label>
+        <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}"></label>
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="submit">Save Changes</button>
+            <button type="button" class="secondary" onclick="document.getElementById('edit-form-target').innerHTML = '<p>Edit cancelled.</p>'">Cancel</button>
+        </div>
+    </div>
+</form>
 {{end}}
