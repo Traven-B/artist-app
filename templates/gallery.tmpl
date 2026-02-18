@@ -219,7 +219,11 @@ document.addEventListener('alpine:init', () => {
             <small class="form-help">{{.NameMsg}}</small>
         {{end}}
         </label>
-        <label>Description: <textarea name="desc" rows="3">{{.Description}}</textarea></label>
+        <label>Description: <textarea name="desc" rows="3">{{.Description}}</textarea>
+        {{if .DescMsg}}
+            <small class="form-help">{{.DescMsg}}</small>
+        {{end}}
+        </label>
         <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}"></label>
         <div style="display: flex; gap: 0.5rem;">
             <button type="submit">Save Changes</button>

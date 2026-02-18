@@ -39,6 +39,7 @@ type FormData struct {
 type EditFormData struct {
 	ArtistRecord
 	NameMsg string
+	DescMsg string
 }
 
 type AddArtistPageData struct {
@@ -478,27 +479,44 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
-			// Check for duplicate in master list (excluding self)
-			for _, other := range globalMasterList {
-				if other.ID != id && strings.EqualFold(strings.TrimSpace(other.Name), name) {
-					w.Header().Set("HX-Retarget", "#edit-form-target")
-					w.Header().Set("HX-Reswap", "innerHTML")
-					data := EditFormData{
-						ArtistRecord: ArtistRecord{
-							ID:          id,
-							Name:        name,
-							Description: desc,
-							ImgURL:      imgURL,
-							Thumb:       rec.Thumb,
-						},
-						NameMsg: "This name is already in the master list!",
+			// Validation
+			var nameMsg, descMsg string
+			if name == "" {
+				nameMsg = "Name is required."
+			}
+			if desc == "" {
+				descMsg = "Description is required."
+			}
+
+			// Check for duplicate in master list (excluding self) if name is not empty
+			if nameMsg == "" {
+				for _, other := range globalMasterList {
+					if other.ID != id && strings.EqualFold(strings.TrimSpace(other.Name), name) {
+						nameMsg = "This name is already in the master list!"
+						break
 					}
-					err := templates.ExecuteTemplate(w, "edit_form_content", data)
-					if err != nil {
-						http.Error(w, "Template error: "+err.Error(), 500)
-					}
-					return
 				}
+			}
+
+			if nameMsg != "" || descMsg != "" {
+				w.Header().Set("HX-Retarget", "#edit-form-target")
+				w.Header().Set("HX-Reswap", "innerHTML")
+				data := EditFormData{
+					ArtistRecord: ArtistRecord{
+						ID:          id,
+						Name:        name,
+						Description: desc,
+						ImgURL:      imgURL,
+						Thumb:       rec.Thumb,
+					},
+					NameMsg: nameMsg,
+					DescMsg: descMsg,
+				}
+				err := templates.ExecuteTemplate(w, "edit_form_content", data)
+				if err != nil {
+					http.Error(w, "Template error: "+err.Error(), 500)
+				}
+				return
 			}
 
 			globalMasterList[i].Name = name
