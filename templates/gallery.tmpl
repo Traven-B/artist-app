@@ -5,6 +5,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- alpine.js -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="/static/daft.css" rel="stylesheet">
@@ -169,8 +170,8 @@ document.addEventListener('alpine:init', () => {
 {{end}}
 
 {{define "grid_item"}}
-<div class="grid-item" id="artist-{{.ID}}" 
-     x-data="{ 
+<div class="grid-item" id="artist-{{.ID}}"
+     x-data="{
         showActions: false,
         artist: {
             id: '{{.ID}}',
@@ -185,7 +186,7 @@ document.addEventListener('alpine:init', () => {
   </div>
   <div class="grid-item-content">
     <h3 class="grid-item-title">
-      <input type="checkbox" 
+      <input type="checkbox"
              class="artist-checkbox"
              :checked="$store.promptStore.selectedArtists.some(a => a.id === artist.id)"
              @change="$store.promptStore.toggle(artist)">
@@ -195,15 +196,15 @@ document.addEventListener('alpine:init', () => {
       <a href="#" @click.prevent="showActions = !showActions" class="action-trigger">⋯</a>
     </p>
     <div x-show="showActions" @click.away="showActions = false" class="action-links">
-      <a href="#edit-section" 
-         hx-get="/artists/edit/{{.ID}}" 
-         hx-target="#edit-form-target" 
+      <a href="#edit-section"
+         hx-get="/artists/edit/{{.ID}}"
+         hx-target="#edit-form-target"
          class="action-link">edit</a><br>
-      <a href="#" 
-         hx-post="/artists/delete/{{.ID}}" 
-         hx-target="closest .grid-item" 
-         hx-swap="outerHTML" 
-         class="action-link" 
+      <a href="#"
+         hx-post="/artists/delete/{{.ID}}"
+         hx-target="closest .grid-item"
+         hx-swap="outerHTML"
+         class="action-link"
          style="color: red;">delete</a>
     </div>
   </div>
