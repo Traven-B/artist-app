@@ -175,8 +175,8 @@ document.addEventListener('alpine:init', () => {
         showActions: false,
         artist: {
             id: '{{.ID}}',
-            name: '{{.Name}}',
-            desc: '{{.Description}}',
+            name: '{{.Name | js}}',
+            desc: '{{.Description | js}}',
             thumb: '/images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}',
             google: 'https://www.google.com/search?q=art+by+{{.Name | urlquery}}'
         }
