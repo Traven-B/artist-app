@@ -214,7 +214,11 @@ document.addEventListener('alpine:init', () => {
 {{define "edit_form_content"}}
 <form hx-post="/artists/update/{{.ID}}" hx-target="#artist-{{.ID}}" hx-swap="outerHTML">
     <div style="display: grid; gap: 1rem;">
-        <label>Name: <input type="text" name="name" value="{{.Name}}"></label>
+        <label>Name: <input type="text" name="name" value="{{.Name}}">
+        {{if .NameMsg}}
+            <small class="form-help">{{.NameMsg}}</small>
+        {{end}}
+        </label>
         <label>Description: <textarea name="desc" rows="3">{{.Description}}</textarea></label>
         <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}"></label>
         <div style="display: flex; gap: 0.5rem;">
