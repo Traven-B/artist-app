@@ -427,6 +427,9 @@ func deleteArtistHandler(w http.ResponseWriter, r *http.Request) {
 	// Save the updated master list
 	saveMasterListInternal()
 
+	// Signal to the frontend that this specific artist was deleted
+	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"artist-deleted": {"id": "%s"}}`, idStr))
+
 	// Return 200 OK with empty body. hx-swap="outerHTML" will remove the element.
 	w.WriteHeader(http.StatusOK)
 }
