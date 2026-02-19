@@ -1,45 +1,54 @@
 {{define "gallery_page"}}
 <!DOCTYPE html>
-<html>
-<body>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- alpine.js -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="/static/daft.css" rel="stylesheet">
-    <link href="/static/daft-overrides.css" rel="stylesheet"><!-- site-measure.css does the grid for gallery at the moment -->
-    <link href="/static/site-measure.css" rel="stylesheet">
-    <title>Gallery</title>
-  </head>
-  <div class="site">
-    <div class="site-wrap">
-      <header class="site-header">
-        <span class="site-title">Artist&nbsp;Gallery</span>
-        <nav class="site-nav">
-          <a href="/">Add Artist</a> <a href="/gallery">Gallery</a> <a href="https://www.artbreeder.com/browse?modelNames=collage.&amp;sort=trending" target="_blank">Artbreeder</a>
-        </nav>
-      </header>
-      <div class="wide-where-grid-goes">
-        <div class="grid-container" id="gallery-grid">
-          {{range .Artists}}
-            {{template "grid_item" .}}
-          {{end}}
-        </div>
-      </div>
 
-      <!-- Add this: Persistent Edit Form Area -->
-      <section id="edit-section" style="padding: 2rem; background: #f9f9f9; border-top: 1px solid #ccc; margin-top: 2rem;">
+    <link href="static/daft.css" rel="stylesheet" />
+    <link href="static/daft-overrides.css" rel="stylesheet" />
+    <link href="static/site-measure.css" rel="stylesheet" />
+    <link href="static/main.css" rel="stylesheet" />
+
+    <title>Artist Gallery</title>
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="container">
+    <nav>
+      <ul class="title">
+        <li><strong>Artist Gallery</strong></li>
+      </ul>
+      <ul class="links">
+        <li><a href="/">Add Artist</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="https://www.artbreeder.com/browse?modelNames=collage.&sort=trending" target="_blank">Artbreeder</a></li>
+      </ul>
+    </nav>
+  </header>
+  <!-- Wide Grid Section -->
+  <div class="wide-where-grid-goes">
+    <div class="grid-container" id="gallery-grid">
+      {{range .Artists}}
+        {{template "grid_item" .}}
+      {{end}}
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Persistent Edit Form Area -->
+    <section id="edit-section" style="padding: 2rem; background: #f9f9f9; border-top: 1px solid #ccc; margin-top: 2rem;">
         <h3>Edit Artist Details</h3>
         <div id="edit-form-target">
             <p>Click "edit" on a card above to load its data here.</p>
         </div>
-      </section>
+    </section>
 
-
-<!-- Alpine workspace -->
-<div x-data @artist-deleted.window="$store.promptStore.remove($event.detail.id)">
+    <!-- Alpine workspace -->
+    <div x-data @artist-deleted.window="$store.promptStore.remove($event.detail.id)">
 
   <div style="text-align:center; padding:1rem;">
     <button class="outline" @click="$store.promptStore.clear()">Clear All</button>
@@ -106,7 +115,6 @@
     </div>
 
   </div>
-</div>
 </div>
 </div>
 
