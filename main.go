@@ -424,6 +424,10 @@ func deleteArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
+			// Delete the thumbnail file from disk
+			if rec.Thumb != "" {
+				_ = os.Remove(filepath.Join(imagesDir, rec.Thumb))
+			}
 			// Remove the record
 			globalMasterList = append(globalMasterList[:i], globalMasterList[i+1:]...)
 			break
@@ -524,10 +528,15 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			// If URL changed, fetch new image and generate new thumb name for cache busting
 			if imgURL != "" && imgURL != globalMasterList[i].ImgURL {
+				oldThumb := globalMasterList[i].Thumb
 				globalMasterList[i].ImgURL = imgURL
 				newThumb := fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
 				if err := fetchAndCreateThumbnail(imgURL, newThumb); err == nil {
 					globalMasterList[i].Thumb = newThumb
+					// Cleanup old thumb from disk
+					if oldThumb != "" && oldThumb != newThumb {
+						_ = os.Remove(filepath.Join(imagesDir, oldThumb))
+					}
 				}
 			}
 
