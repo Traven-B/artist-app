@@ -232,7 +232,11 @@ document.addEventListener('alpine:init', () => {
             <small class="form-help">{{.DescMsg}}</small>
         {{end}}
         </label>
-        <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}"></label>
+        <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}">
+        {{if .ImgMsg}}
+            <small class="form-help">{{.ImgMsg}}</small>
+        {{end}}
+        </label>
         <div style="display: flex; gap: 0.5rem;">
             <button type="submit">Save Changes</button>
             <button type="button" class="secondary" onclick="document.getElementById('edit-form-target').innerHTML = '<p>Click &quot;edit&quot; on a card above to load its data here.</p>'">All Done</button>

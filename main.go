@@ -40,6 +40,7 @@ type EditFormData struct {
 	ArtistRecord
 	NameMsg string
 	DescMsg string
+	ImgMsg  string
 }
 
 type AddArtistPageData struct {
@@ -523,22 +524,38 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			globalMasterList[i].Name = name
-			globalMasterList[i].Description = desc
-
-			// If URL changed, fetch new image and generate new thumb name for cache busting
+			// If URL changed and is not empty, fetch new image
 			if imgURL != "" && imgURL != globalMasterList[i].ImgURL {
 				oldThumb := globalMasterList[i].Thumb
-				globalMasterList[i].ImgURL = imgURL
 				newThumb := fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
-				if err := fetchAndCreateThumbnail(imgURL, newThumb); err == nil {
-					globalMasterList[i].Thumb = newThumb
-					// Cleanup old thumb from disk
-					if oldThumb != "" && oldThumb != newThumb {
-						_ = os.Remove(filepath.Join(imagesDir, oldThumb))
+				if err := fetchAndCreateThumbnail(imgURL, newThumb); err != nil {
+					log.Printf("thumbnail error for %s: %v", imgURL, err)
+					w.Header().Set("HX-Retarget", "#edit-form-target")
+					w.Header().Set("HX-Reswap", "innerHTML")
+					data := EditFormData{
+						ArtistRecord: ArtistRecord{
+							ID:          id,
+							Name:        name,
+							Description: desc,
+							ImgURL:      imgURL,
+							Thumb:       rec.Thumb,
+						},
+						ImgMsg: "Warning: could not create thumbnail from image URL.",
 					}
+					_ = templates.ExecuteTemplate(w, "edit_form_content", data)
+					return
+				}
+				// Success
+				globalMasterList[i].ImgURL = imgURL
+				globalMasterList[i].Thumb = newThumb
+				// Cleanup old thumb from disk
+				if oldThumb != "" && oldThumb != newThumb {
+					_ = os.Remove(filepath.Join(imagesDir, oldThumb))
 				}
 			}
+
+			globalMasterList[i].Name = name
+			globalMasterList[i].Description = desc
 
 			saveMasterListInternal()
 
