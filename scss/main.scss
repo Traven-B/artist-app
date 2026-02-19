@@ -3,7 +3,7 @@
 @use '_frozen1.scss';
 @use '_list.scss';
 @use '_form.scss';
-// @use '_site-measure.scss';      // app gallery, still used when new index done --- oops it breaks index, header and eveything
+@use '_site-measure.scss';      // app gallery, still used when new index done --- oops it breaks index, header and eveything
 
 // @use '_consolidated.scss';    // legacy index actual but now tiny -- look in bk_static for .css named one
 // @use '_x-consolidated.scss';  // legacy index big
