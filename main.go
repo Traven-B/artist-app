@@ -559,6 +559,9 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			saveMasterListInternal()
 
+			// Reset the edit form area to its default state via OOB swap
+			fmt.Fprint(w, `<div id="edit-form-target" hx-swap-oob="true"><p>Click "edit" on a card above to load its data here.</p></div>`)
+
 			// Return just the updated grid item fragment
 			err := templates.ExecuteTemplate(w, "grid_item", globalMasterList[i])
 			if err != nil {
