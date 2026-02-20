@@ -232,6 +232,30 @@ func deleteTodoItemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// htmx handler: add one or more names to the to-do list
+func addToTodoListHandler(w http.ResponseWriter, r *http.Request) {
+	rawNames := r.FormValue("names")
+	lines := strings.Split(rawNames, "\n")
+	updated := false
+
+	for _, line := range lines {
+		name := strings.TrimSpace(line)
+		if name != "" {
+			globalToAddList = append(globalToAddList, name)
+			updated = true
+		}
+	}
+
+	if updated {
+		_ = os.WriteFile(filepath.Join(dataDir, "artists_to_add.txt"), []byte(strings.Join(globalToAddList, "\n")+"\n"), 0644)
+	}
+
+	data := AddArtistPageData{
+		ToAdd: globalToAddList,
+	}
+	_ = templates.ExecuteTemplate(w, "todo_list_items", data)
+}
+
 // htmx handler: decide whether to show confirmation dialog or delete directly
 func confirmDeleteTodoFormHandler(w http.ResponseWriter, r *http.Request) {
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
@@ -639,6 +663,7 @@ func main() {
 	http.HandleFunc("/submit-artist-add-form", submitArtistAddFormHandler)
 	http.HandleFunc("/confirm-delete-todo", confirmDeleteTodoHandler)
 	http.HandleFunc("/delete-todo-item", deleteTodoItemHandler)
+	http.HandleFunc("/add-to-todo-list", addToTodoListHandler)
 	http.HandleFunc("/artists/delete/", deleteArtistHandler)
 	http.HandleFunc("/artists/edit/", editArtistHandler)
 	http.HandleFunc("/artists/update/", updateArtistHandler)

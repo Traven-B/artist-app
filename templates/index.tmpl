@@ -34,6 +34,22 @@
     <!-- Artist To-Add List -->
     <div>
       <h2>Artists To Add</h2>
+      <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+        <textarea 
+            id="bulk-names" 
+            name="names" 
+            rows="1" 
+            placeholder="Artist name(s)..." 
+            style="flex-grow: 1; min-height: 1.5rem; vertical-align: middle;"></textarea>
+        <button 
+            type="button"
+            hx-post="/add-to-todo-list" 
+            hx-include="#bulk-names" 
+            hx-target="#todo-list" 
+            hx-on::after-request="document.getElementById('bulk-names').value=''">
+            Add
+        </button>
+      </div>
       <ul id="todo-list">
         {{template "todo_list_items" .}}
       </ul>
