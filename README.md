@@ -16,7 +16,7 @@ This can be copied to the clipboard and then pasted into an Artbreeder prompt.
 ## Demo (GitHub Pages)
 
 - **Gallery demo (works):** \\
-  <https://traven-b.github.io/artist-app/Gallery.html>
+  <https://traven-b.github.io/artist-app/artist-gallery.html>
 
 - **Index / add-artists page (working except for delete buttons.):** \\
   <https://traven-b.github.io/artist-app/index.html>
