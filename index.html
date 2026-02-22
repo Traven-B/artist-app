@@ -21,7 +21,7 @@
       </ul>
       <ul class="links">
         <li><a href="index.html">Add Artist</a></li>
-        <li><a href="Gallery.html">Gallery</a></li>
+        <li><a href="artist-gallery.html">Gallery</a></li>
         <li><a href="https://www.artbreeder.com/browse?modelNames=collage.&amp;sort=trending" target="_blank">Artbreeder</a></li>
       </ul>
     </nav>
@@ -33,6 +33,12 @@
 
     <div>
       <h2>Artists To Add</h2>
+      <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+        <textarea id="bulk-names" name="names" rows="1" placeholder="Artist name(s)..." style="flex-grow: 1; min-height: 1.5rem; vertical-align: middle;"></textarea>
+        <button type="button" hx-post="/add-to-todo-list" hx-include="#bulk-names" hx-target="#todo-list" hx-on::after-request="document.getElementById('bulk-names').value=''">
+            Add
+        </button>
+      </div>
       <ul id="todo-list" hx-swap-oob="true">
 
 
@@ -47,7 +53,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Oscar de la Renta&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -64,7 +70,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Ilya Kuvshinov&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -81,7 +87,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Hayao Miyazaki&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -98,7 +104,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Stanley artgerm&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -115,7 +121,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;charlie bowater&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -132,7 +138,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;WLOP&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -149,7 +155,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Rachel Ruysch&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -166,7 +172,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Jean-Michel Basquiat&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -183,7 +189,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Ikenaga Yasunari&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -200,7 +206,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Tomoko Aran&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -217,7 +223,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Trevor Brown&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -234,7 +240,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Roy Lichtenstein&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -251,7 +257,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Patrick Nagel&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -268,7 +274,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Albrecht Dürer&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -285,7 +291,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Atey Ghailan&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -302,7 +308,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Hieronymus Bosch&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -319,7 +325,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Pieter Bruegel the Elder&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -336,7 +342,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Sandro Botticell&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -353,7 +359,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Henri de Toulouse-Lautrec&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -370,7 +376,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Edgar Degas&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -387,7 +393,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Egon Schiele&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -404,7 +410,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;sho murase&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -421,7 +427,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Yuko Shimizu&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -438,7 +444,7 @@
             Add
         </button>
 
-        <button class="delete-local-btn" onclick="document.getElementById('test-dialog').showModal()">
+        <button class="delete-local-btn" hx-post="/confirm-delete-todo" hx-vals="{&quot;name&quot;: &quot;Reika Iwami&quot;}" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
             Delete
         </button>
     </span>
@@ -466,14 +472,23 @@
         <a href="https://www.google.com/search?q=art+by+Reika%20Iwami" target="_blank">Google: Reika Iwami</a> | <a href="https://www.google.com/search?q=very+short+telegraphic+description+of+art+style+of+%22Reika%20Iwami%22+around+twenty+words&amp;udm=50" target="_blank">AI</a> | <a href="https://www.google.com/search?tbm=isch&amp;q=art+by+Reika%20Iwami+filetype:jpg" target="_blank">JPG</a>
     </div>
     <div class="action-row">
-        <button type="button" id="check-duplicates-btn" hx-post="/check-name" hx-include="#add-artist-form input[name=name]" hx-target="#artist-form" hx-swap="innerHTML">Check Duplicates</button> <button type="button" id="remove-from-list-btn" hx-post="/delete-todo-form" hx-include="#add-artist-form input[name=original_name]">Delete (and Clear)</button> <button type="button" class="cancel-btn" hx-post="/cancel-add-form" hx-target="#artist-form" hx-swap="innerHTML">Cancel</button>
+        <button type="button" id="check-duplicates-btn" hx-post="/check-name" hx-include="#add-artist-form input[name=name]" hx-target="#artist-form" hx-swap="innerHTML">
+            Check Duplicates
+        </button>
+
+        <button type="button" id="remove-from-list-btn" hx-post="/confirm-delete-todo-form" hx-include="#add-artist-form input[name=original_name]" hx-target="#test-dialog" hx-swap="innerHTML" hx-on::after-request="document.getElementById('test-dialog').showModal()">
+            Delete (and Clear)
+        </button>
+
+        <button type="button" class="cancel-btn" hx-post="/cancel-add-form" hx-target="#artist-form" hx-swap="innerHTML">
+            Cancel
+        </button>
     </div>
 
-    <label>Description: <textarea name="desc" rows="5">Reika Iwami
-combined traditional Japanese woodblock techniques (sosaku hanga) with
-modern abstraction. Her style features heavily grained wood textures,
-embossed patterns, and gold or silver leaf to evoke water and organic
-landscapes</textarea>
+    <label>Description: <textarea name="desc" rows="5">Sōsaku-hanga
+woodblock prints. Distilled nature—water and wood—using monochrome
+palettes, found driftwood textures, heavy embossing, and elegant
+gold/silver leaf.</textarea>
 
     </label>
 
@@ -495,27 +510,7 @@ landscapes</textarea>
 
 
 
-<dialog id="test-dialog">
-  <article>
-    <header>
-      <strong>Test dialog</strong>
-    </header>
-
-    <p>
-      This dialog is only here to prove Pico styling works.
-    </p>
-
-    <footer>
-      <button type="button" class="secondary" onclick="document.getElementById('test-dialog').close()">
-        Cancel
-      </button>
-
-      <button type="button" onclick="document.getElementById('test-dialog').close()">
-        OK
-      </button>
-    </footer>
-  </article>
-</dialog>
+<dialog id="test-dialog"></dialog>
 
 
 
