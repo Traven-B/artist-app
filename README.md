@@ -30,6 +30,7 @@ Notes:
 - The Google Search links on the Index and Gallery pages are functional.
 - Form submissions, updates,  and deletions require the Go backend to be running locally; they do not process on the static demo.
 - Some buttons on the Gallery page work,
+    - the `⋯` char as link in each artist card reveals edit and delete links.
     - the check mark buttons on each grid element cause an artist to be added to the working set playground at bottom of the page,
     - the copy checked button at bottom of the page copies the subset of artists with their check mark set to  the clipboard.
 
