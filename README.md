@@ -15,21 +15,23 @@ This can be copied to the clipboard and then pasted into an Artbreeder prompt.
 
 ## Demo (GitHub Pages)
 
-- **Gallery demo (works):** \\
+- **Gallery demo:** \\
   <https://traven-b.github.io/artist-app/artist-gallery.html>
 
-- **Index / add-artists page (working except for delete buttons.):** \\
+- **Index / add-artists page:** \\
   <https://traven-b.github.io/artist-app/index.html>
 
 Notes:
 
-- The Gallery page works as intended, even as gh-pages demo.
-- On the index page,
-    - when served by app, the **Delete** buttons are not wired up.\\
-      add name to form, do delete (and clear) button to remove name in list.
-    - when served by gh-pages, the example index page only has working google search links.
-- There is no update/edit flow and no delete for existing gallery entries.
-- This is good enough for the intended workflow.
+**Index Page UI:** On the GitHub Pages demo, clicking **Delete** triggers the **backdrop/overlay** but does not launch a functional modal. To clear the overlay and return to the page, you must press the **Esc** key.
+
+**Functionality:**
+
+- The Google Search links on the Index and Gallery pages are functional.
+- Form submissions, updates,  and deletions require the Go backend to be running locally; they do not process on the static demo.
+- Some buttons on the Gallery page work,
+    - the check mark buttons on each grid element cause an artist to be added to the working set playground at bottom of the page,
+    - the copy checked button at bottom of the page copies the subset of artists with their check mark set to be copied to the clipboard.
 
 ---
 
