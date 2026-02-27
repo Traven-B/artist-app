@@ -1,7 +1,7 @@
 {{define "artist_form"}}
 <h2>Add Artist Form</h2>
 
-<form id="add-artist-form" method="post" action="/add-artist" name="add-artist-form">
+<form id="add-artist-form" method="post" action="/add-artist" name="add-artist-form" hx-encoding="multipart/form-data">
 
     <label>Name: <input type="text" name="name" value="{{.FormData.Name}}">
     {{if .FormData.NameMsg}}
@@ -50,7 +50,7 @@
     {{end}}
     </label>
 
-    <label>Image URL (.jpg): <input type="text" name="img_url" value="{{.FormData.ImgURL}}">
+    <label>Image File (.png, .jpg, .jpeg): <input type="file" name="image" accept=".png,.jpg,.jpeg">
 
     {{if .FormData.ImgMsg}}
         <small class="form-help">{{.FormData.ImgMsg}} </small>

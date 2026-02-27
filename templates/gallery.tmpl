@@ -220,7 +220,7 @@ document.addEventListener('alpine:init', () => {
 {{end}}
 
 {{define "edit_form_content"}}
-<form hx-post="/artists/update/{{.ID}}" hx-target="#artist-{{.ID}}" hx-swap="outerHTML">
+<form hx-post="/artists/update/{{.ID}}" hx-target="#artist-{{.ID}}" hx-swap="outerHTML" hx-encoding="multipart/form-data">
     <div style="display: grid; gap: 1rem;">
         <label>Name: <input type="text" name="name" value="{{.Name}}">
         {{if .NameMsg}}
@@ -232,7 +232,7 @@ document.addEventListener('alpine:init', () => {
             <small class="form-help">{{.DescMsg}}</small>
         {{end}}
         </label>
-        <label>Image URL: <input type="text" name="img_url" value="{{.ImgURL}}">
+        <label>Image File (.png, .jpg, .jpeg): <input type="file" name="image" accept=".png,.jpg,.jpeg">
         {{if .ImgMsg}}
             <small class="form-help">{{.ImgMsg}}</small>
         {{end}}

@@ -79,8 +79,6 @@ func ReadMasterList(filename string) ([]ArtistRecord, error) {
 				rec.Name = strings.TrimSpace(line[2:])
 			} else if strings.HasPrefix(line, "d:") {
 				rec.Description = strings.TrimSpace(line[2:])
-			} else if strings.HasPrefix(line, "i:") {
-				rec.ImgURL = strings.TrimSpace(line[2:])
 			} else if strings.HasPrefix(line, "t:") {
 				rec.Thumb = strings.TrimSpace(line[2:])
 			}
@@ -326,7 +324,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("name"))
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
-	imgURL := strings.TrimSpace(r.FormValue("img_url"))
 
 	var nameMsg, descMsg, imgMsg string
 
@@ -337,20 +334,22 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	if desc == "" {
 		descMsg = "Description is required."
 	}
-	if imgURL == "" {
-		imgMsg = "Image URL is required."
+
+	// Handle File Upload
+	file, _, fileErr := r.FormFile("image")
+	if fileErr != nil {
+		imgMsg = "Image file is required."
 	}
 
 	// Check for duplicate in master list
 	for _, rec := range globalMasterList {
-
-		if strings.EqualFold(strings.TrimSpace(rec.Name), name) { // <- also trim stored name
+		if strings.EqualFold(strings.TrimSpace(rec.Name), name) {
 			nameMsg = "This name is already in the master list!"
 			break
 		}
 	}
 
-	// If any validation failed, return form with all values preserved
+	// If initial validation failed, return form
 	if nameMsg != "" || descMsg != "" || imgMsg != "" {
 		data := AddArtistPageData{
 			ToAdd: globalToAddList,
@@ -358,7 +357,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				Name:         name,
 				OriginalName: originalName,
 				Desc:         desc,
-				ImgURL:       imgURL,
 				NameMsg:      nameMsg,
 				DescMsg:      descMsg,
 				ImgMsg:       imgMsg,
@@ -368,7 +366,9 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate next ID
+	defer file.Close()
+
+	// Generate next ID and thumb filename
 	maxID := 0
 	for _, rec := range globalMasterList {
 		if rec.ID > maxID {
@@ -378,26 +378,20 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	newID := maxID + 1
 	thumbFile := fmt.Sprintf("%d-%d.jpg", newID, time.Now().Unix())
 
-	// Try to create thumbnail
-	if !thumbnailExists(thumbFile) {
-		if err := fetchAndCreateThumbnail(imgURL, thumbFile); err != nil {
-			log.Printf("thumbnail error for %s: %v", imgURL, err)
-			imgMsg = "Warning: could not create thumbnail from image URL."
-			data := AddArtistPageData{
-				ToAdd: globalToAddList,
-				FormData: FormData{
-					Name:         name,
-					OriginalName: originalName,
-					Desc:         desc,
-					ImgURL:       imgURL,
-					NameMsg:      nameMsg,
-					DescMsg:      descMsg,
-					ImgMsg:       imgMsg,
-				},
-			}
-			_ = templates.ExecuteTemplate(w, "submit_response", data)
-			return // stop processing further
+	// Create thumbnail from uploaded file
+	if err := createThumbnailFromReader(file, thumbFile); err != nil {
+		log.Printf("thumbnail error: %v", err)
+		data := AddArtistPageData{
+			ToAdd: globalToAddList,
+			FormData: FormData{
+				Name:         name,
+				OriginalName: originalName,
+				Desc:         desc,
+				ImgMsg:       "Failed to process image file.",
+			},
 		}
+		_ = templates.ExecuteTemplate(w, "submit_response", data)
+		return
 	}
 
 	// Add artist to master list
@@ -405,20 +399,11 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		ID:          newID,
 		Name:        name,
 		Description: desc,
-		ImgURL:      imgURL,
 		Thumb:       thumbFile,
 	}
 	globalMasterList = append(globalMasterList, newRec)
 
-	// Save master list to disk
-	var builder strings.Builder
-	for _, rec := range globalMasterList {
-		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\ni:%s\nt:%s\n\n", rec.ID, rec.Name, rec.Description, rec.ImgURL, rec.Thumb))
-	}
-	if err := os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644); err != nil {
-		http.Error(w, "Error writing master list: "+err.Error(), 500)
-		return
-	}
+	saveMasterListInternal()
 
 	// Remove name from to-do list if present
 	if originalName != "" {
@@ -429,16 +414,13 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		globalToAddList = newList
-		if err := os.WriteFile(filepath.Join(dataDir, "artists_to_add.txt"), []byte(strings.Join(globalToAddList, "\n")+"\n"), 0644); err != nil {
-			http.Error(w, "Error writing to-do list: "+err.Error(), 500)
-			return
-		}
+		_ = os.WriteFile(filepath.Join(dataDir, "artists_to_add.txt"), []byte(strings.Join(globalToAddList, "\n")+"\n"), 0644)
 	}
 
 	// Return updated form (cleared) + updated list via OOB swaps
 	data := AddArtistPageData{
 		ToAdd:    globalToAddList,
-		FormData: FormData{}, // form cleared on success
+		FormData: FormData{},
 	}
 	_ = templates.ExecuteTemplate(w, "submit_response", data)
 }
@@ -504,12 +486,10 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.TrimSpace(r.FormValue("name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
-	imgURL := strings.TrimSpace(r.FormValue("img_url"))
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
-			// Validation
-			var nameMsg, descMsg string
+			var nameMsg, descMsg, imgMsg string
 			if name == "" {
 				nameMsg = "Name is required."
 			}
@@ -517,7 +497,6 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				descMsg = "Description is required."
 			}
 
-			// Check for duplicate in master list (excluding self) if name is not empty
 			if nameMsg == "" {
 				for _, other := range globalMasterList {
 					if other.ID != id && strings.EqualFold(strings.TrimSpace(other.Name), name) {
@@ -527,7 +506,21 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			if nameMsg != "" || descMsg != "" {
+			// Handle Optional File Upload
+			file, _, fileErr := r.FormFile("image")
+			var newThumb string
+			if fileErr == nil {
+				defer file.Close()
+				newThumb = fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
+				if err := createThumbnailFromReader(file, newThumb); err != nil {
+					log.Printf("thumbnail error: %v", err)
+					imgMsg = "Failed to process image file."
+				}
+			} else if fileErr != http.ErrMissingFile {
+				imgMsg = "Error uploading image."
+			}
+
+			if nameMsg != "" || descMsg != "" || imgMsg != "" {
 				w.Header().Set("HX-Retarget", "#edit-form-target")
 				w.Header().Set("HX-Reswap", "innerHTML")
 				data := EditFormData{
@@ -535,44 +528,20 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 						ID:          id,
 						Name:        name,
 						Description: desc,
-						ImgURL:      imgURL,
 						Thumb:       rec.Thumb,
 					},
 					NameMsg: nameMsg,
 					DescMsg: descMsg,
+					ImgMsg:  imgMsg,
 				}
-				err := templates.ExecuteTemplate(w, "edit_form_content", data)
-				if err != nil {
-					http.Error(w, "Template error: "+err.Error(), 500)
-				}
+				_ = templates.ExecuteTemplate(w, "edit_form_content", data)
 				return
 			}
 
-			// If URL changed and is not empty, fetch new image
-			if imgURL != "" && imgURL != globalMasterList[i].ImgURL {
+			// Success - Update record
+			if newThumb != "" {
 				oldThumb := globalMasterList[i].Thumb
-				newThumb := fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
-				if err := fetchAndCreateThumbnail(imgURL, newThumb); err != nil {
-					log.Printf("thumbnail error for %s: %v", imgURL, err)
-					w.Header().Set("HX-Retarget", "#edit-form-target")
-					w.Header().Set("HX-Reswap", "innerHTML")
-					data := EditFormData{
-						ArtistRecord: ArtistRecord{
-							ID:          id,
-							Name:        name,
-							Description: desc,
-							ImgURL:      imgURL,
-							Thumb:       rec.Thumb,
-						},
-						ImgMsg: "Warning: could not create thumbnail from image URL.",
-					}
-					_ = templates.ExecuteTemplate(w, "edit_form_content", data)
-					return
-				}
-				// Success
-				globalMasterList[i].ImgURL = imgURL
 				globalMasterList[i].Thumb = newThumb
-				// Cleanup old thumb from disk
 				if oldThumb != "" && oldThumb != newThumb {
 					_ = os.Remove(filepath.Join(imagesDir, oldThumb))
 				}
@@ -600,7 +569,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 func saveMasterListInternal() {
 	var builder strings.Builder
 	for _, rec := range globalMasterList {
-		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\ni:%s\nt:%s\n\n", rec.ID, rec.Name, rec.Description, rec.ImgURL, rec.Thumb))
+		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb))
 	}
 	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
 }
@@ -677,39 +646,12 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func thumbnailExists(filename string) bool {
-	// thumbnailPath := filepath.Join("images", filename)
-
-	thumbnailPath := filepath.Join(imagesDir, filename)
-	if _, err := os.Stat(thumbnailPath); err == nil {
-		return true
-	}
-	return false
-}
-
-func fetchAndCreateThumbnail(imageURL, filename string) error {
-	// Ensure images dir exists
-	// imagesDir := "images" / LOOK, using global now ...
+func createThumbnailFromReader(reader io.Reader, filename string) error {
 	if err := os.MkdirAll(imagesDir, 0755); err != nil {
 		return err
 	}
 
-	resp, err := http.Get(imageURL)
-	if err != nil {
-		return fmt.Errorf("error fetching image: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("error fetching image: status %d", resp.StatusCode)
-	}
-
-	var buf bytes.Buffer
-	if _, err := io.Copy(&buf, resp.Body); err != nil {
-		return fmt.Errorf("error reading image data: %v", err)
-	}
-
-	img, err := imaging.Decode(&buf)
+	img, err := imaging.Decode(reader)
 	if err != nil {
 		return fmt.Errorf("error decoding image: %v", err)
 	}
