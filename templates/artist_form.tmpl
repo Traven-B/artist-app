@@ -50,7 +50,9 @@
     {{end}}
     </label>
 
-    <label>Image File (.png, .jpg, .jpeg): <input type="file" name="image" accept=".png,.jpg,.jpeg">
+    <label>Image (File or URL): 
+        <input type="file" name="image" accept=".png,.jpg,.jpeg">
+        <input type="text" name="img_url" value="{{.FormData.ImgURL}}" placeholder="...or paste image URL" style="margin-top: 4px;">
 
     {{if .FormData.ImgMsg}}
         <small class="form-help">{{.FormData.ImgMsg}} </small>

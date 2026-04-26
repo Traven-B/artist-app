@@ -104,6 +104,20 @@ func ReadToAddList(filename string) ([]string, error) {
 	return names, nil
 }
 
+// --- Helper for fetching remote images ---
+func downloadImage(urlStr string) (io.ReadCloser, error) {
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(urlStr)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		resp.Body.Close()
+		return nil, fmt.Errorf("bad status: %s", resp.Status)
+	}
+	return resp.Body, nil
+}
+
 // --- Handlers ---
 
 func addArtistPage(w http.ResponseWriter, r *http.Request) {
@@ -324,6 +338,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("name"))
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
+	imgURL := strings.TrimSpace(r.FormValue("img_url"))
 
 	var nameMsg, descMsg, imgMsg string
 
@@ -335,10 +350,10 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		descMsg = "Description is required."
 	}
 
-	// Handle File Upload
+	// Handle File Upload or URL
 	file, _, fileErr := r.FormFile("image")
-	if fileErr != nil {
-		imgMsg = "Image file is required."
+	if fileErr != nil && imgURL == "" {
+		imgMsg = "Image file or URL is required."
 	}
 
 	// Check for duplicate in master list
@@ -357,6 +372,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				Name:         name,
 				OriginalName: originalName,
 				Desc:         desc,
+				ImgURL:       imgURL,
 				NameMsg:      nameMsg,
 				DescMsg:      descMsg,
 				ImgMsg:       imgMsg,
@@ -365,8 +381,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		_ = templates.ExecuteTemplate(w, "submit_response", data)
 		return
 	}
-
-	defer file.Close()
 
 	// Generate next ID and thumb filename
 	maxID := 0
@@ -378,16 +392,38 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	newID := maxID + 1
 	thumbFile := fmt.Sprintf("%d-%d.jpg", newID, time.Now().Unix())
 
-	// Create thumbnail from uploaded file
-	if err := createThumbnailFromReader(file, thumbFile); err != nil {
-		log.Printf("thumbnail error: %v", err)
+	// Create thumbnail from source
+	var reader io.ReadCloser
+	if fileErr == nil {
+		reader = file
+		defer file.Close()
+	} else {
+		var err error
+		reader, err = downloadImage(imgURL)
+		if err != nil {
+			log.Printf("download error: %v", err)
+			imgMsg = "Failed to download image from URL."
+		} else {
+			defer reader.Close()
+		}
+	}
+
+	if imgMsg == "" {
+		if err := createThumbnailFromReader(reader, thumbFile); err != nil {
+			log.Printf("thumbnail error: %v", err)
+			imgMsg = "Failed to process image source."
+		}
+	}
+
+	if imgMsg != "" {
 		data := AddArtistPageData{
 			ToAdd: globalToAddList,
 			FormData: FormData{
 				Name:         name,
 				OriginalName: originalName,
 				Desc:         desc,
-				ImgMsg:       "Failed to process image file.",
+				ImgURL:       imgURL,
+				ImgMsg:       imgMsg,
 			},
 		}
 		_ = templates.ExecuteTemplate(w, "submit_response", data)
@@ -506,15 +542,34 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			// Handle Optional File Upload
+			// Handle Optional File Upload or URL
+			imgURL := strings.TrimSpace(r.FormValue("img_url"))
 			file, _, fileErr := r.FormFile("image")
 			var newThumb string
-			if fileErr == nil {
-				defer file.Close()
-				newThumb = fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
-				if err := createThumbnailFromReader(file, newThumb); err != nil {
-					log.Printf("thumbnail error: %v", err)
-					imgMsg = "Failed to process image file."
+
+			if fileErr == nil || imgURL != "" {
+				var reader io.ReadCloser
+				if fileErr == nil {
+					reader = file
+					defer file.Close()
+				} else {
+					var err error
+					reader, err = downloadImage(imgURL)
+					if err != nil {
+						log.Printf("download error: %v", err)
+						imgMsg = "Failed to download image."
+					} else {
+						defer reader.Close()
+					}
+				}
+
+				if imgMsg == "" {
+					newThumb = fmt.Sprintf("%d-%d.jpg", id, time.Now().Unix())
+					if err := createThumbnailFromReader(reader, newThumb); err != nil {
+						log.Printf("thumbnail error: %v", err)
+						imgMsg = "Failed to process image source."
+						newThumb = ""
+					}
 				}
 			} else if fileErr != http.ErrMissingFile {
 				imgMsg = "Error uploading image."
