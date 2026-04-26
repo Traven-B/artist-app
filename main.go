@@ -2,7 +2,7 @@ package main
 
 import (
 	// "bufio"
-	"bytes"
+	// "bytes"
 	"fmt"
 	"html/template"
 	"io"
