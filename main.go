@@ -118,6 +118,20 @@ func downloadImage(urlStr string) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
+func isDuplicate(name string) bool {
+	for _, rec := range globalMasterList {
+		if strings.EqualFold(strings.TrimSpace(rec.Name), name) {
+			return true
+		}
+	}
+	for _, n := range globalToAddList {
+		if strings.EqualFold(strings.TrimSpace(n), name) {
+			return true
+		}
+	}
+	return false
+}
+
 // --- Handlers ---
 
 func addArtistPage(w http.ResponseWriter, r *http.Request) {
@@ -248,24 +262,37 @@ func deleteTodoItemHandler(w http.ResponseWriter, r *http.Request) {
 func addToTodoListHandler(w http.ResponseWriter, r *http.Request) {
 	rawNames := r.FormValue("names")
 	lines := strings.Split(rawNames, "\n")
-	updated := false
+	addedCount := 0
+	skippedCount := 0
 
 	for _, line := range lines {
 		name := strings.TrimSpace(line)
-		if name != "" {
+		if name == "" {
+			continue
+		}
+
+		if isDuplicate(name) {
+			skippedCount++
+		} else {
 			globalToAddList = append(globalToAddList, name)
-			updated = true
+			addedCount++
 		}
 	}
 
-	if updated {
+	if addedCount > 0 {
 		_ = os.WriteFile(filepath.Join(dataDir, "artists_to_add.txt"), []byte(strings.Join(globalToAddList, "\n")+"\n"), 0644)
 	}
 
-	data := AddArtistPageData{
-		ToAdd: globalToAddList,
+	data := struct {
+		ToAdd   []string
+		Added   int
+		Skipped int
+	}{
+		ToAdd:   globalToAddList,
+		Added:   addedCount,
+		Skipped: skippedCount,
 	}
-	_ = templates.ExecuteTemplate(w, "todo_list_items", data)
+	_ = templates.ExecuteTemplate(w, "todo_add_response", data)
 }
 
 // htmx handler: decide whether to show confirmation dialog or delete directly

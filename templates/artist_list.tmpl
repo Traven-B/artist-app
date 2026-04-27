@@ -1,3 +1,14 @@
+{{define "todo_add_response"}}
+{{template "todo_list_items" .}}
+<div id="todo-status" hx-swap-oob="true">
+    {{if or (gt .Added 0) (gt .Skipped 0)}}
+        <small class="todo-status-msg">
+            {{.Added}} added, {{.Skipped}} duplicate{{if ne .Skipped 1}}s{{end}} skipped
+        </small>
+    {{end}}
+</div>
+{{end}}
+
 {{define "todo_list_items"}}
 {{range .ToAdd}}
 <li>
