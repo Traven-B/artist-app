@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+# usage: ruby rename_images.rb <directory> <optional_suffix>
+# example: ruby rename_images.rb ./test_images 2222222222
 # usage: ruby scripts/rename_images.rb <directory> <suffix> [master_list_file]
 # example: ruby scripts/rename_images.rb ./test_images 2222222222 ./test_data/artists_master.txt
 
@@ -36,7 +39,7 @@ end
 if master_list_path && File.exist?(master_list_path) && !rename_map.empty?
   content = File.read(master_list_path)
   updated = false
-  
+
   rename_map.each do |old_name, new_name|
     # Update references in the master list file (e.g., t:1.jpg -> t:1-2222222222.jpg)
     if content.include?("t:#{old_name}")
@@ -44,7 +47,7 @@ if master_list_path && File.exist?(master_list_path) && !rename_map.empty?
       updated = true
     end
   end
-  
+
   if updated
     File.write(master_list_path, content)
     puts "Updated references in #{master_list_path}"
