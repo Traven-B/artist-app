@@ -9,11 +9,15 @@
     <link href="static/daft.css" rel="stylesheet" />
     <link href="static/daft-overrides.css" rel="stylesheet" />
     <link href="static/todo.css" rel="stylesheet" />
+    <link href="static/env-ribbon.css" rel="stylesheet" />
     <link href="static/main.css" rel="stylesheet" />
 
     <title>Add Artist</title>
 </head>
 <body>
+  {{if .IsTestMode}}
+  <div class="env-ribbon">TEST MODE</div>
+  {{end}}
 
   <!-- Header / Navigation -->
   <header class="container">

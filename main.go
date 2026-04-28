@@ -44,8 +44,9 @@ type EditFormData struct {
 }
 
 type AddArtistPageData struct {
-	ToAdd    []string
-	FormData FormData
+	ToAdd      []string
+	FormData   FormData
+	IsTestMode bool
 }
 
 var templates *template.Template
@@ -136,8 +137,9 @@ func isDuplicate(name string) bool {
 
 func addArtistPage(w http.ResponseWriter, r *http.Request) {
 	data := AddArtistPageData{
-		ToAdd:    globalToAddList,
-		FormData: FormData{},
+		ToAdd:      globalToAddList,
+		FormData:   FormData{},
+		IsTestMode: dataDir == "test_data",
 	}
 
 	// not executing add_artist_page , doing flat top index , probably rename everything here eventually
@@ -149,8 +151,12 @@ func addArtistPage(w http.ResponseWriter, r *http.Request) {
 
 func galleryPage(w http.ResponseWriter, r *http.Request) {
 	data := struct {
-		Artists []ArtistRecord
-	}{Artists: globalMasterList}
+		Artists    []ArtistRecord
+		IsTestMode bool
+	}{
+		Artists:    globalMasterList,
+		IsTestMode: dataDir == "test_data",
+	}
 
 	err := templates.ExecuteTemplate(w, "gallery_page", data)
 	if err != nil {
