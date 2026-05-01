@@ -10,6 +10,7 @@
     <link href="static/daft-overrides.css" rel="stylesheet" />
     <link href="static/todo.css" rel="stylesheet" />
     <link href="static/env-ribbon.css" rel="stylesheet" />
+    <link href="static/floating-nav.css" rel="stylesheet" />
     <link href="static/main.css" rel="stylesheet" />
 
     <title>Add Artist</title>
@@ -18,6 +19,11 @@
   {{if .IsTestMode}}
   <div class="env-ribbon">TEST MODE</div>
   {{end}}
+
+  <div class="floating-nav">
+    <div class="nav-circle" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to Top">▲</div>
+    <div class="nav-circle" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Scroll to Bottom">▼</div>
+  </div>
 
   <!-- Header / Navigation -->
   <header class="container">
