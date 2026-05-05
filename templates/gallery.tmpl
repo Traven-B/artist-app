@@ -190,7 +190,7 @@ document.addEventListener('alpine:init', () => {
             id: '{{.ID}}',
             name: '{{.Name | js}}',
             desc: '{{.Description | js}}',
-            thumb: '/images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}',
+            thumb: 'images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}',
             google: 'https://www.google.com/search?q=art+by+{{.Name | urlquery}}'
         }
      }">
@@ -237,7 +237,7 @@ document.addEventListener('alpine:init', () => {
             <small class="form-help">{{.DescMsg}}</small>
         {{end}}
         </label>
-        <label>Image (File or URL): 
+        <label>Image (File or URL):
             <input type="file" name="image" accept=".png,.jpg,.jpeg">
             <input type="text" name="img_url" value="" placeholder="...or paste image URL" style="margin-top: 4px;">
         {{if .ImgMsg}}
