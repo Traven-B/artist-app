@@ -28,25 +28,23 @@ FileUtils.mkdir_p(File.join(BUILD, "images"))
 FileUtils.cp_r(File.join(SOURCE, "static"), BUILD)
 FileUtils.cp_r(File.join(SOURCE, "test_images"), File.join(BUILD, "images"))
 
-puts "\n== Next steps =="
+puts <<~MSG
 
-puts "1. Open build dir:"
-puts "   cd #{BUILD}"
-puts ""
+  == Next steps ==
+  1. Open build dir:
+     cd #{BUILD}
 
-puts "2. Open files in editor:"
-puts "   vim index.html"
-puts "   vim artist-gallery.html"
-puts ""
+  2. Open files in editor:
+     vim index.html
+     vim artist-gallery.html
 
-puts "3. In browser:"
-puts "   - open app index page"
-puts "   - complete form"
-puts "   - press F12 → copy DOM (outerHTML)"
-puts "   - paste into index.html"
-puts ""
+  3. In browser:
+     - open app index page
+     - complete form
+     - press F12 → copy DOM (outerHTML)
+     - paste into index.html
 
-puts "4. Repeat for gallery page"
-puts ""
+  4. Repeat for gallery page
 
-puts "== Done staging files =="
+  == Done staging files ==
+MSG
