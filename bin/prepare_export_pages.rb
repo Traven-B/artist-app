@@ -5,10 +5,6 @@ require "fileutils"
 SOURCE = File.expand_path("~/work/go/toss")
 BUILD = File.expand_path("../exported_pages", SOURCE) # Sister directory
 
-puts SOURCE
-puts BUILD
-
-exit 0
 
 INDEX = File.join(BUILD, "index.html")
 GALLERY = File.join(BUILD, "artist-gallery.html")
