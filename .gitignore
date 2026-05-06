@@ -2,13 +2,14 @@
 backup_*/
 
 # Production dirs
-data/
-images/
+/data/
+/images/
 
 # Ignore static pages saved by devtools using copy("<!DOCTYPE html>\n" + document.documentElement.outerHTML)
 # by way of a script that copies assets and does fixup
 # this well be contents pushed by `gh-pages -d experted pages
-/exported_pages
+# TODO DELME not a thing, we are building gh-pages in a sister directory of the project
+# /exported_pages
 
 # do not track the compiled binary
 artistapp
