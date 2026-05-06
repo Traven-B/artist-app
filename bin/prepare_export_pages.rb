@@ -5,6 +5,9 @@ require "fileutils"
 SOURCE = File.expand_path("..", __dir__)
 BUILD = File.expand_path("../../gh_artist_pages", __dir__) # Sister directory
 
+# puts SOURCE
+# puts BUILD
+# exit 0
 
 INDEX = File.join(BUILD, "index.html")
 GALLERY = File.join(BUILD, "artist-gallery.html")
