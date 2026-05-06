@@ -5,6 +5,11 @@ require "fileutils"
 SOURCE = File.expand_path("~/work/go/toss")
 BUILD = File.expand_path("../exported_pages", SOURCE) # Sister directory
 
+puts SOURCE
+puts BUILD
+
+exit 0
+
 INDEX = File.join(BUILD, "index.html")
 GALLERY = File.join(BUILD, "artist-gallery.html")
 
@@ -35,16 +40,16 @@ FileUtils.cp_r(File.join(SOURCE, "test_images"), File.join(BUILD, "images"))
 
 puts <<~MSG
 
-  == Manual Steps ==
-  1. Open the running app in your browser (TEST_MODE=true).
-  2. For both the Index and Gallery pages, run this in the F12 console:
-     copy("<!DOCTYPE html>\\n" + document.documentElement.outerHTML)
-  3. Paste the result into:
-     Index:   #{INDEX}
-     Gallery: #{GALLERY}
+       == Manual Steps ==
+       1. Open the running app in your browser (TEST_MODE=true).
+       2. For both the Index and Gallery pages, run this in the F12 console:
+          copy("<!DOCTYPE html>\\n" + document.documentElement.outerHTML)
+       3. Paste the result into:
+          Index:   #{INDEX}
+          Gallery: #{GALLERY}
 
-  >>> Press [ENTER] once you have saved both files to perform fixups...
-MSG
+       >>> Press [ENTER] once you have saved both files to perform fixups...
+     MSG
 
 $stdin.gets
 
