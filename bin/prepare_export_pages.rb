@@ -35,7 +35,7 @@ FileUtils.mkdir_p(File.join(BUILD, "static"))
 FileUtils.mkdir_p(File.join(BUILD, "images"))
 
 FileUtils.cp_r(File.join(SOURCE, "static"), BUILD)
-FileUtils.cp_r(File.join(SOURCE, "test_images"), File.join(BUILD, "images"))
+FileUtils.cp_r(File.join(SOURCE, "test_images", "."), File.join(BUILD, "images"))
 
 puts <<~MSG
 
