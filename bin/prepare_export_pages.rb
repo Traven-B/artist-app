@@ -1,16 +1,21 @@
 #!/usr/bin/env ruby
 
-# copy("<!DOCTYPE html>\n" + document.documentElement.outerHTML)
-
-# "Reika Iwami created abstract sōsaku hanga woodblock prints. Her style features monochromatic sumi ink, rich wood grain textures, deep embossing, and gold or silver leaf accents."
-
 require "fileutils"
 
 SOURCE = File.expand_path("~/work/go/toss")
-BUILD = File.expand_path("~/work/go/gh_artist_pages")
+BUILD = File.expand_path("../exported_pages", SOURCE) # Sister directory
 
 INDEX = File.join(BUILD, "index.html")
 GALLERY = File.join(BUILD, "artist-gallery.html")
+
+def fixup_html(path)
+  return unless File.exist?(path) && !File.read(path).empty?
+  puts "   Fixing navigation links in #{File.basename(path)}..."
+  content = File.read(path)
+  content.gsub!('href="/"', 'href="index.html"')
+  content.gsub!('href="/gallery"', 'href="artist-gallery.html"')
+  File.write(path, content)
+end
 
 puts "== Export setup =="
 
@@ -18,7 +23,7 @@ puts "== Export setup =="
 FileUtils.rm_rf(BUILD)
 FileUtils.mkdir_p(BUILD)
 
-# 2. create empty files (so vim/browser has targets)
+# 2. create empty files
 File.write(INDEX, "")
 File.write(GALLERY, "")
 
@@ -30,26 +35,21 @@ FileUtils.cp_r(File.join(SOURCE, "test_images"), File.join(BUILD, "images"))
 
 puts <<~MSG
 
-       == Next steps ==
-       1. Open build dir:
-          cd #{BUILD}
+  == Manual Steps ==
+  1. Open the running app in your browser (TEST_MODE=true).
+  2. For both the Index and Gallery pages, run this in the F12 console:
+     copy("<!DOCTYPE html>\\n" + document.documentElement.outerHTML)
+  3. Paste the result into:
+     Index:   #{INDEX}
+     Gallery: #{GALLERY}
 
-       2. Open files in editor:
-          vim index.html
-          vim artist-gallery.html
+  >>> Press [ENTER] once you have saved both files to perform fixups...
+MSG
 
-       3. In project dir start webapp in test if you havn's already.
-          - ./run.sh test
+$stdin.gets
 
-       4. In browser:
-          - open app index page
-          - add Reika Iwami from list
-          - complete desc with ' Reika Iwami created abstract sōsaku hanga woodblock prints. Her style features monochromatic sumi ink, rich wood grain textures, deep embossing, and gold or silver leaf accents. '
-          - press F12 → copy("<!DOCTYPE html>\n" + document.documentElement.outerHTML)
-          - paste into index.html
+puts "== Running fixups =="
+fixup_html(INDEX)
+fixup_html(GALLERY)
 
-       5. Repeat for gallery page
-          - do not select any artits and so do not make a working group at bottom
-
-       == Done staging files ==
-     MSG
+puts "\nDone. You can now run a_deploy.sh (ensure the path in that script matches #{BUILD})."
