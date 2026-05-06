@@ -30,21 +30,26 @@ FileUtils.cp_r(File.join(SOURCE, "test_images"), File.join(BUILD, "images"))
 
 puts <<~MSG
 
-  == Next steps ==
-  1. Open build dir:
-     cd #{BUILD}
+       == Next steps ==
+       1. Open build dir:
+          cd #{BUILD}
 
-  2. Open files in editor:
-     vim index.html
-     vim artist-gallery.html
+       2. Open files in editor:
+          vim index.html
+          vim artist-gallery.html
 
-  3. In browser:
-     - open app index page
-     - complete form
-     - press F12 → copy DOM (outerHTML)
-     - paste into index.html
+       3. In project dir start webapp in test if you havn's already.
+          - ./run.sh test
 
-  4. Repeat for gallery page
+       4. In browser:
+          - open app index page
+          - add Reika Iwami from list
+          - complete desc with ' Reika Iwami created abstract sōsaku hanga woodblock prints. Her style features monochromatic sumi ink, rich wood grain textures, deep embossing, and gold or silver leaf accents. '
+          - press F12 → copy("<!DOCTYPE html>\n" + document.documentElement.outerHTML)
+          - paste into index.html
 
-  == Done staging files ==
-MSG
+       5. Repeat for gallery page
+          - do not select any artits and so do not make a working group at bottom
+
+       == Done staging files ==
+     MSG
