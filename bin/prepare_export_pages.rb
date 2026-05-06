@@ -2,8 +2,8 @@
 
 require "fileutils"
 
-SOURCE = File.expand_path("~/work/go/toss")
-BUILD = File.expand_path("../exported_pages", SOURCE) # Sister directory
+SOURCE = File.expand_path("..", __dir__)
+BUILD = File.expand_path("../../gh_artist_pages", __dir__) # Sister directory
 
 
 INDEX = File.join(BUILD, "index.html")
