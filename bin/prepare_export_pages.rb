@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-unless File.exist?(File.expand_path("../.artist_app_root", __FILE__))
+unless File.exist?(File.expand_path("../../.artist_app_root", __FILE__))
   puts "Error: This script must be run from a subdirectory of the project root."
   exit 1
 end
