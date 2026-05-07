@@ -135,29 +135,27 @@ The index page is a todo list of artist names yet to be added to the master list
 
 Where does that list come from?
 
--   It lives in `data/artists_to_add.txt`
+-   It lives in `data/artists_to_add.txt`.
 
--   Whenever you stumble on a name, add it there
+-   You can add one or more names (one per line, no commas) via the **Artists To Add** text area on the index page while the app is running.
 
 
 ### Important caveat
 
-You **should not edit `artists_to_add.txt` while the app is running**.
+You **should not manually edit `artists_to_add.txt` with a text editor while the app is running**.
 
 Why?
 
--   When you consume a name via the app, the in-memory todo list is rewritten
-    back to disk
--   Any manual edits made while the app is running would be clobbered
+-   When you consume or add a name via the app, the in-memory todo list is rewritten back to disk.
+-   Any manual edits made to the file while the app is running would be clobbered.
 
 Workflow workaround:
 
--   Keep a separate scratch file (for example `names.txt`)
+-   Keep a separate scratch file (for example `names.txt`).
 
--   Append new names to `artists_to_add.txt` **when the app is not running**
+-   When the app is running, paste lines from your scratch file into the bulk add text area on the index page.
 
-
-This is inconvenient, but works well enough.
+-   Append new names manually to `artists_to_add.txt` only **when the app is not running**.
 
 ### What the form does
 
