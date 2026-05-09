@@ -26,7 +26,10 @@ if opts[:grep]
   names.each do |name|
     # Look for the name in quotes to match exactly within the hash structure
     match = data_lines.find { |l| l.include?("\"#{name}\"") || l.include?("'#{name}'") }
-    puts match.strip if match
+    if match
+      puts match.strip
+      puts ""
+    end
   end
 else
   # Default formatting: art by Name,
