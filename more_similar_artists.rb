@@ -3,7 +3,7 @@
 require "set"
 
 # Load the dataset from augmented file
-ARTISTS = eval(File.read("artists_augmented.rb"))
+eval(File.read("artists_augmented.rb"))
 
 # Configuration for matching (copied from similar_artists.rb)
 PHRASES = [
