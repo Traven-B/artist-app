@@ -1,5 +1,7 @@
 # ArtistApp
 
+Perfect for the computer hobbyist or Artbreeder enthusiast! You just need a Go compiler – no JavaScript framework, no database – just compile and go.
+
 A small Go + HTMX + Alpine.js app for collecting artist names, building a gallery,
 and generating “art by …” prompt fragments for tools like Artbreeder.
 
