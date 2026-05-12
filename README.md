@@ -222,7 +222,9 @@ If you fix spelling, run `Check Duplicates` again to refresh links.
 
 Note the JPG link, that will open Google Images search for that artist in image search, asking for only JPGs.
 
-Note the AI link. It does a search using Google AI mode and asks for a short description of the style of the artist. Clever me.  So, makes a good enough block of text for the description text area of the form. So you can spend time finding a jpg that will work.
+Note the AI link (for Description) and the new **AI Features** link. These links open Google AI mode searches in new tabs. Clicking them will generate telegraphic text relevant to the artist's style or a detailed "Visual DNA" profile. You can then copy this generated text and paste it into the respective "Description" or "Features" text areas in the form. **The results of the "AI Features" search should be pasted into the "Features" text input area.**
+
+The 'Features' data is preserved and can be edited. See `TODO.md` for ideas on how to further utilize this augmented feature data.
 
 
 ### Why this page feels “modern”
