@@ -2,84 +2,95 @@ id:1
 n:Oscar de la Renta
 d:De la Renta became internationally known in the 1960s as one of the couturiers who dressed Jacqueline Kennedy.
 t:1-2222222222.jpg
+f:haute couture, textiles | evening wear, florals, femininity | vibrant palettes, intricate embroidery, voluminous silk, ruffled tiers | romantic elegance | Dominican-American luxury fashion
 
 id:2
 n:Ilya Kuvshinov
 d:Ilya Kuvshinov  Russian illustrator based in Tokyo. character designs for Ghost in the Shell: SAC 2045 (series, bad reviews) and The Wonderland (2019)
 t:2-2222222222.jpg
+f:digital illustration, animation | female portraits, cinematic scenes | expressive eyes, soft lighting, vibrant color pops, clean line art | stylized realism, anime-aesthetic | modern digital art, pop culture influences
 
 id:3
 n:Hayao Miyazaki
 d:creator of Japanese animated feature films, one of the most accomplished filmmakers in the history of animation.
 t:3-2222222222.jpg
+f:hand-drawn animation | nature, aviation, childhood | lush landscapes, intricate machinery, expressive movement | whimsical realism | Studio Ghibli, Japanese environmentalism
 
 id:4
 n:Daniel gerhartz
 d:born in 1965, a remarkable figure of American Kitsch
 t:4-2222222222.jpg
+f:oil on linen, oil on canvas | figurative, portraits, pastoral scenes | painterly brushwork, dramatic chiaroscuro, luminous highlights | contemporary realism | romanticism-inspired modern fine art
 
 id:5
 n:Henry Clive
 d:American, active 1925-1950, graphic artist and illustrator who created illustrations for The American Weekly and cover series, which were posed for by screen celebrities.
 t:5-2222222222.jpg
+f:oil on canvas | pin-up girls, pulp magazine covers, movie stars | bold color blocks, theatrical lighting, stylized glamor | art deco illustration | golden age of american illustration
 
 id:6
 n:Frank Xavier Leyendecker
 d:commercial artist and illustrator. magazine cover art for Vogue, Vanity Fair, and Life, artwork for advertisers.
 t:6-2222222222.jpg
+f:oil on canvas | fashionable men, women, fantasy figures | elongated anatomy, gestural brushwork, luminous texture | Golden Age Illustration | American commercial art and cover design
 
 id:7
 n:Ethel Hays
 d:cartoonist, flapper-themed comic strips, 1920s and 1930s. Art Deco style. In the 1940s and 1950s, children's book illustrator.
 t:7-2222222222.jpg
+f:ink drawing | flappers, modern women, domestic humor | clean contours, expressive gesture, fashionable silhouettes | Art Deco cartooning | 1920s–30s American newspaper syndication
 
 id:8
 n:Erté
 d:20th-century Russian-born French artist and designer. fashion, graphic arts, etc.
 t:8-2222222222.jpg
+f:gouache, ink | female figures, theatrical costumes, jewelry | sinuous lines, elongated silhouettes, meticulous detail, geometric symmetry | Art Deco | 20th-century fashion illustration and stage design
 
 id:9
 n:George Barbier
 d:French illustrator of the early 20th century.
 t:9-2222222222.jpg
+f:gouache, pochoir prints | haute couture, mythological figures, high society | rhythmic silhouettes, flat color fields, intricate ornamentation | Art Deco | Parisian Belle Époque fashion illustration
 
 id:10
 n:Tom Bagshaw
 d:highly rendered digital painting style, portraying women, themes of fantasy, beauty, and mysticism
 t:10-2222222222.jpg
+f:digital painting | feminine portraits, mythology, fashion | porcelain skin, hyper-detailed textures, ethereal lighting | dark contemporary realism | modern macabre fine art
 
 id:11
 n:Picasso
 d:Cubism, Surrealism, Modern art, Picasso's Blue Period
 t:11-2222222222.jpg
+f:oil on canvas, mixed media | portraits, figures, still lifes | fragmented forms, multiple perspectives, geometric abstraction, bold linework | cubism, surrealism | 20th-century european avant-garde
 
 id:12
 n:kusama
 d:surrealism, Art Brut, pop art, abstract expressionism
 t:12-2222222222.jpg
-
-id:13
-n:Alphonse Mucha
-d:Czech painter, illustrator, and graphic artist. Art Nouveau, symbolist
-t:13-2222222222.jpg
+f:installation, painting, sculpture | dots, pumpkins, nets, infinity | repetitive patterns, vibrant color, phallic forms, mirrored environments | avant-garde, pop art | mental health, obsessionality, psychedelia
 
 id:14
 n:Thomas Kinkade
 d:American painter of popular realistic, pastoral, and idyllic subjects.
 t:14-2222222222.jpg
+f:oil painting | cottages, gardens, light | luminous highlights, high-contrast glow, idyllic scenery | kitsch, contemporary realism | american mass-market commercial art
 
 id:15
 n:Andrew Atroshenko
 d:figurative art portrays beautiful women, music and dance. Romantic impressionist.
 t:15-2222222222.jpg
+f:oil on canvas | female figures, dancers, musicians | expressive brushwork, high-contrast chiaroscuro, vibrant primary palettes | contemporary impressionism | romantic figurative art
 
 id:16
 n:James Jean
 d:bold, vibrant hues
 t:16-2222222222.jpg
+f:mixed media (graphite, digital, acrylic) | figures, floral-anatomical fusions, mythology | fluid linework, dreamlike layering, intricate detailing | contemporary surrealism | contemporary art & pop culture
 
 id:17
 n:Mark Ryden
 d:painter of the Lowbrow art movement. pop surrealism
 t:17-2222222222.jpg
+f:oil on panel | pop-surrealist icons, porcelain children, anatomical meat | uncanny doll-like figures, lush detail, alchemical symbolism | Pop Surrealism | contemporary lowbrow art
 
