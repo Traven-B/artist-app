@@ -23,6 +23,7 @@ type ArtistRecord struct {
 	Description string
 	ImgURL      string
 	Thumb       string
+	Features    string // New field for feature data
 }
 
 type FormData struct {
@@ -82,6 +83,8 @@ func ReadMasterList(filename string) ([]ArtistRecord, error) {
 				rec.Description = strings.TrimSpace(line[2:])
 			} else if strings.HasPrefix(line, "t:") {
 				rec.Thumb = strings.TrimSpace(line[2:])
+			} else if strings.HasPrefix(line, "f:") { // Parse new feature field
+				rec.Features = strings.TrimSpace(line[2:])
 			}
 		}
 		records = append(records, rec)
@@ -398,6 +401,8 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If initial validation failed, return form
+	features := "" // Initialize features as empty for new artists
+
 	if nameMsg != "" || descMsg != "" || imgMsg != "" {
 		data := AddArtistPageData{
 			ToAdd: globalToAddList,
@@ -469,6 +474,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		Name:        name,
 		Description: desc,
 		Thumb:       thumbFile,
+		Features:    features, // Add the new features field
 	}
 	globalMasterList = append(globalMasterList, newRec)
 
@@ -566,6 +572,9 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				descMsg = "Description is required."
 			}
 
+			// Preserve existing features, as we're not allowing editing it yet.
+			existingFeatures := rec.Features
+
 			if nameMsg == "" {
 				for _, other := range globalMasterList {
 					if other.ID != id && strings.EqualFold(strings.TrimSpace(other.Name), name) {
@@ -617,6 +626,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 						Name:        name,
 						Description: desc,
 						Thumb:       rec.Thumb,
+						Features:    existingFeatures, // Preserve features in case of other validation errors
 					},
 					NameMsg: nameMsg,
 					DescMsg: descMsg,
@@ -637,6 +647,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			globalMasterList[i].Name = name
 			globalMasterList[i].Description = desc
+			globalMasterList[i].Features = existingFeatures // Ensure features are written back
 
 			saveMasterListInternal()
 
@@ -657,7 +668,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 func saveMasterListInternal() {
 	var builder strings.Builder
 	for _, rec := range globalMasterList {
-		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb))
+		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features))
 	}
 	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
 }
