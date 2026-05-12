@@ -31,6 +31,7 @@ type FormData struct {
 	OriginalName string
 	Desc         string
 	ImgURL       string
+	Features     string // New field for form data
 
 	NameMsg string
 	DescMsg string
@@ -175,6 +176,7 @@ func populateFormHandler(w http.ResponseWriter, r *http.Request) {
 			Name:         name,
 			OriginalName: name,
 			NameMsg:      "",
+			Features:     "", // Initialize features for populate form
 		},
 	}
 	// Only render the form partial
@@ -376,6 +378,8 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	desc := strings.TrimSpace(r.FormValue("desc"))
 	imgURL := strings.TrimSpace(r.FormValue("img_url"))
 
+	features := strings.TrimSpace(r.FormValue("features")) // Get features from form
+
 	var nameMsg, descMsg, imgMsg string
 
 	// Validation
@@ -401,8 +405,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If initial validation failed, return form
-	features := "" // Initialize features as empty for new artists
-
 	if nameMsg != "" || descMsg != "" || imgMsg != "" {
 		data := AddArtistPageData{
 			ToAdd: globalToAddList,
@@ -411,6 +413,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				OriginalName: originalName,
 				Desc:         desc,
 				ImgURL:       imgURL,
+				Features:     features, // Pass back features from form for re-display
 				NameMsg:      nameMsg,
 				DescMsg:      descMsg,
 				ImgMsg:       imgMsg,
@@ -561,6 +564,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.TrimSpace(r.FormValue("name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
+	features := strings.TrimSpace(r.FormValue("features")) // Get features from form
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
@@ -571,9 +575,6 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 			if desc == "" {
 				descMsg = "Description is required."
 			}
-
-			// Preserve existing features, as we're not allowing editing it yet.
-			existingFeatures := rec.Features
 
 			if nameMsg == "" {
 				for _, other := range globalMasterList {
@@ -626,7 +627,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 						Name:        name,
 						Description: desc,
 						Thumb:       rec.Thumb,
-						Features:    existingFeatures, // Preserve features in case of other validation errors
+						Features:    features, // Pass back features from form for re-display
 					},
 					NameMsg: nameMsg,
 					DescMsg: descMsg,
@@ -647,7 +648,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			globalMasterList[i].Name = name
 			globalMasterList[i].Description = desc
-			globalMasterList[i].Features = existingFeatures // Ensure features are written back
+			globalMasterList[i].Features = features // Update features from form
 
 			saveMasterListInternal()
 

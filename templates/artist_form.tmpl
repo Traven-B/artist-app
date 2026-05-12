@@ -50,6 +50,9 @@
     {{end}}
     </label>
 
+    <label>Features: <textarea name="features" rows="3">{{.FormData.Features}}</textarea>
+    </label>
+
     <label>Image (File or URL): 
         <input type="file" name="image" accept=".png,.jpg,.jpeg">
         <input type="text" name="img_url" value="{{.FormData.ImgURL}}" placeholder="...or paste image URL" style="margin-top: 4px;">
