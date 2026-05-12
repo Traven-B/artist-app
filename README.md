@@ -190,7 +190,7 @@ You can also enter a name directly (not from the todo list).
 
 #### Image Upload and URLs
 
-When searching for images, if you use Google Image Search (via the 'JPG' link or otherwise), you can right-click on a desired image in the results panel (e.g., in Firefox) and select "Open image in new tab". Copying the URL from this new tab and pasting it into the "Image (File or URL)" field will, with near certainty, allow the application to successfully fetch and decode the image to create a thumbnail.
+When searching for images, if you use the Google Image Search 'JPG' link, you can right-click on a desired image in the results panel (e.g., in Firefox) and select "Open image in new tab". Copying the URL from this new tab and pasting it into the "Image (File or URL)" field will, with near certainty, allow the application to successfully fetch and decode the image to create a thumbnail.
 
 
 If a duplicate is found and you don’t want to use the todo-list name:
