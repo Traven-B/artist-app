@@ -177,6 +177,13 @@ entry is still matched and removed.
 
 You can also enter a name directly (not from the todo list).
 
+No matter how a name is entered (from the todo list "Add" button, or typed directly, or even a corrected spelling),
+always press "Check Duplicates" as the next step. This is crucial for:
+-   Ensuring the name isn't already in the master list or todo list.
+-   Refreshing the Google search links with the current name.
+Be aware that if a duplicate name is detected after entering data into other form fields,
+the form will refresh, and you might lose unsaved input.
+
 ### Duplicate checking
 
 -   `Check Duplicates`:
