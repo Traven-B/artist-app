@@ -14,6 +14,3 @@ The "Features" field (Visual DNA profile) can be utilized in several ways to enh
 
 *   **"Visual DNA" Profile Display:** Directly display the parsed or raw "Visual DNA" profile on artist detail pages (e.g., in a dedicated section on the gallery card or a pop-up), offering a quick, summarized overview of their key characteristics without needing to infer them from the description.
 
-*   **Google AI Integration for Features (Future):** Integrate the Google AI mode for generating feature data directly into the add/edit artist workflow, similar to how descriptions are currently suggested:
-    *   Perform a Google AI search using the specific prompt from `grep_context_of_fixup.txt`.
-    *   Present the AI-generated one-liner to the user for review and insertion into the "Features" text area, potentially with an option to remove the artist's name if the AI includes it.
