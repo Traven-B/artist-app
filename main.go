@@ -464,6 +464,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				OriginalName: originalName,
 				Desc:         desc,
 				ImgURL:       imgURL,
+				Features:     features, // Preserve features data
 				ImgMsg:       imgMsg,
 			},
 		}
