@@ -907,7 +907,19 @@ func saveMasterListInternal() {
 
 func saveFeatureVectorsInternal() {
 	var builder strings.Builder
-	for id, vector := range globalFeatureVectors {
+	
+	// Collect all IDs
+	var ids []int
+	for id := range globalFeatureVectors {
+		ids = append(ids, id)
+	}
+
+	// Sort IDs numerically
+	sort.Ints(ids)
+
+	// Loop through sorted IDs to build the string buffer
+	for _, id := range ids {
+		vector := globalFeatureVectors[id]
 		var vecParts []string
 		for _, val := range vector {
 			vecParts = append(vecParts, fmt.Sprintf("%g", val))
