@@ -84,6 +84,85 @@ func cosineSimilarity(v1, v2 []float64) float64 {
 	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB))
 }
 
+// getVectorFromGemini requests a vector from Google's gemini-embedding-001 endpoint
+func getVectorFromGemini(text string) ([]float64, error) {
+	api_key := os.Getenv("GEMINI_API_KEY")
+	if api_key == "" {
+		return nil, fmt.Errorf("missing GEMINI_API_KEY environment variable")
+	}
+
+	uri := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=%s", api_key)
+
+	payload := map[string]interface{}{
+		"model": "models/gemini-embedding-001",
+		"content": map[string]interface{}{
+			"parts": []map[string]string{
+				{"text": text},
+			},
+		},
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JSON payload: %w", err)
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second} // Increased timeout for API call
+	maxRetries := 5
+	for retries := 0; retries < maxRetries; retries++ {
+		req, err := http.NewRequest("POST", uri, strings.NewReader(string(jsonPayload)))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create API request: %w", err)
+		}
+		req.Header.Set("Content-Type", "application/json")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("Network error (attempt %d/%d): %v", retries+1, maxRetries, err)
+			time.Sleep(5 * time.Second) // Constant retry for network issues
+			continue
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == 429 {
+			retryAfter := 22 // Default retry time if not specified by API
+			if resp.Header.Get("Retry-After") != "" {
+				if ra, err := strconv.Atoi(resp.Header.Get("Retry-After")); err == nil {
+					retryAfter = ra
+				}
+			}
+			log.Printf("Rate limit exceeded (429) (attempt %d/%d). Retrying in %d seconds...", retries+1, maxRetries, retryAfter)
+			time.Sleep(time.Duration(retryAfter) * time.Second)
+			continue
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			bodyBytes, _ := io.ReadAll(resp.Body)
+			return nil, fmt.Errorf("API error: %s - %s", resp.Status, string(bodyBytes))
+		}
+
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read API response body: %w", err)
+		}
+
+		var result struct {
+			Embedding struct {
+				Values []float64 `json:"values"`
+			} `json:"embedding"`
+		}
+		if err := json.Unmarshal(bodyBytes, &result); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal API response: %w", err)
+		}
+
+		if len(result.Embedding.Values) == 0 {
+			return nil, fmt.Errorf("API response error: Embedding values not found or malformed")
+		}
+
+		return result.Embedding.Values, nil
+	}
+	return nil, fmt.Errorf("max retries exhausted for getVectorFromGemini")
+}
+
 // --- File IO ---
 
 func ReadMasterList(filename string) ([]ArtistRecord, error) {
@@ -812,6 +891,19 @@ func saveMasterListInternal() {
 		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features))
 	}
 	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
+}
+
+func saveFeatureVectorsInternal() {
+	var builder strings.Builder
+	for id, vector := range globalFeatureVectors {
+		var vecParts []string
+		for _, val := range vector {
+			vecParts = append(vecParts, fmt.Sprintf("%g", val))
+		}
+		vecStr := strings.Join(vecParts, ",")
+		builder.WriteString(fmt.Sprintf("id:%d\nef:%s\n\n", id, vecStr))
+	}
+	_ = os.WriteFile(filepath.Join(dataDir, "artists_feature_vectors.txt"), []byte(builder.String()), 0644)
 }
 
 // --- Main ---
