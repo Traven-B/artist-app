@@ -233,8 +233,11 @@ func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Retrieve target artist's vector from globalFeatureVectors
+	targetVector, hasVector := globalFeatureVectors[targetID]
+
 	// Dynamic Fallback: If artist isn't found or doesn't have vectors yet, default to canned indexes safely
-	if !found || len(targetArtist.Vector) == 0 {
+	if !found || !hasVector || len(targetVector) == 0 {
 		cannedIDs := []int{targetID, targetID + 1, targetID + 2, targetID + 3}
 		responseMap := map[string][]int{"ids": cannedIDs}
 		jsonIDs, _ := json.Marshal(responseMap)
