@@ -222,12 +222,10 @@ func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/artists/similar-ids/")
 	targetID, _ := strconv.Atoi(idStr)
 
-	// 1. Locate the target artist from memory
-	var targetArtist ArtistRecord // this is line 226
+	// 1. Check if the target artist exists in the master list
 	found := false
 	for _, a := range globalMasterList {
 		if a.ID == targetID {
-			targetArtist = a
 			found = true
 			break
 		}
