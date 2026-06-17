@@ -223,7 +223,7 @@ func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
 	targetID, _ := strconv.Atoi(idStr)
 
 	// 1. Locate the target artist from memory
-	var targetArtist ArtistRecord
+	var targetArtist ArtistRecord // this is line 226
 	found := false
 	for _, a := range globalMasterList {
 		if a.ID == targetID {
