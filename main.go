@@ -60,6 +60,7 @@ var templates *template.Template
 // File-backed data
 var globalMasterList []ArtistRecord
 var globalToAddList []string
+var globalFeatureVectors map[int][]float64 // Map artist ID to its feature vector
 
 var dataDir = "data"     // Default prod
 var imagesDir = "images" // Default prod
@@ -110,23 +111,51 @@ func ReadMasterList(filename string) ([]ArtistRecord, error) {
 				rec.Thumb = strings.TrimSpace(line[2:])
 			} else if strings.HasPrefix(line, "f:") {
 				rec.Features = strings.TrimSpace(line[2:])
-			} else if strings.HasPrefix(line, "ef:") {
-				// Parse custom comma-separated vector values if present in data file
-				vecStr := strings.TrimSpace(line[2:])
-				if vecStr != "" {
-					parts := strings.Split(vecStr, ",")
-					for _, p := range parts {
-						val, err := strconv.ParseFloat(strings.TrimSpace(p), 64)
-						if err == nil {
-							rec.Vector = append(rec.Vector, val)
-						}
-					}
-				}
 			}
 		}
 		records = append(records, rec)
 	}
 	return records, nil
+}
+
+func ReadFeatureVectors(filename string) (map[int][]float64, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	featureVectors := make(map[int][]float64)
+	blocks := strings.Split(string(data), "\n\n")
+	for _, block := range blocks {
+		if strings.TrimSpace(block) == "" {
+			continue
+		}
+		lines := strings.Split(block, "\n")
+		var id int
+		var vector []float64
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "id:") {
+				id, _ = strconv.Atoi(strings.TrimSpace(line[3:]))
+			} else if strings.HasPrefix(line, "ef:") {
+				vecStr := strings.TrimSpace(line[3:])
+				if vecStr != "" {
+					parts := strings.Split(vecStr, ",")
+					for _, p := range parts {
+						val, err := strconv.ParseFloat(strings.TrimSpace(p), 64)
+						if err == nil {
+							vector = append(vector, val)
+						} else {
+							log.Printf("Error parsing float from feature vector string '%s': %v", p, err)
+						}
+					}
+				}
+			}
+		}
+		if id != 0 && len(vector) > 0 {
+			featureVectors[id] = vector
+		}
+	}
+	return featureVectors, nil
 }
 
 func ReadToAddList(filename string) ([]string, error) {
@@ -223,10 +252,14 @@ func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 2. Compute similarity scores across all other 160+ artists
 	for _, a := range globalMasterList {
-		if a.ID == targetID || len(a.Vector) == 0 {
-			continue // Skip self and entries lacking embeddings
+		if a.ID == targetID {
+			continue // Skip self
 		}
-		score := cosineSimilarity(targetArtist.Vector, a.Vector)
+		aVector, aHasVector := globalFeatureVectors[a.ID]
+		if !aHasVector || len(aVector) == 0 {
+			continue // Skip entries lacking embeddings
+		}
+		score := cosineSimilarity(targetVector, aVector)
 		matches = append(matches, match{id: a.ID, score: score})
 	}
 
@@ -583,7 +616,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		Description: desc,
 		Thumb:       thumbFile,
 		Features:    features,
-		Vector:      nil, // Set to nil or call embedding generator here when adding live
+		Vector:      nil, // Vector is no longer stored in ArtistRecord, but will be generated/read from artists_feature_vectors.txt
 	}
 	globalMasterList = append(globalMasterList, newRec)
 
@@ -753,6 +786,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 			globalMasterList[i].Name = name
 			globalMasterList[i].Description = desc
 			globalMasterList[i].Features = features
+			globalMasterList[i].Vector = nil // Clear any potential old vector data
 
 			saveMasterListInternal()
 
@@ -773,14 +807,8 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 func saveMasterListInternal() {
 	var builder strings.Builder
 	for _, rec := range globalMasterList {
-		// Re-serialize features along with vectors if they exist
-		var vecParts []string
-		for _, val := range rec.Vector {
-			vecParts = append(vecParts, fmt.Sprintf("%g", val))
-		}
-		vecStr := strings.Join(vecParts, ",")
-
-		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\nef:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features, vecStr))
+		// Feature vectors are now stored in a separate file, so we don't save 'ef:' here.
+		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features))
 	}
 	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
 }
@@ -816,6 +844,11 @@ func main() {
 	globalToAddList, err = ReadToAddList(filepath.Join(dataDir, "artists_to_add.txt"))
 	if err != nil {
 		log.Fatal("Error reading to-add list:", err)
+	}
+
+	globalFeatureVectors, err = ReadFeatureVectors(filepath.Join(dataDir, "artists_feature_vectors.txt"))
+	if err != nil {
+		log.Fatal("Error reading feature vectors:", err)
 	}
 
 	http.HandleFunc("/", addArtistPage)
