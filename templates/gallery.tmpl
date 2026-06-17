@@ -133,6 +133,58 @@
 
 
 <script>
+
+// Handle the custom event triggered by HTMX's backend response
+window.addEventListener('checkSimilarArtists', function(e) {
+    // 1. Log exactly what HTMX is giving us so we can see reality in the console
+    console.log("=== HTMX TRIGGER EVENT CAUGHT ===");
+    console.log("Raw event detail:", e.detail);
+
+    let incomingIds = null;
+
+    // 2. Safely extract the array based on how HTMX delivers it
+    if (e.detail) {
+      if (Array.isArray(e.detail)) {
+        incomingIds = e.detail;
+      } else if (e.detail.ids && Array.isArray(e.detail.ids)) {
+        incomingIds = e.detail.ids;
+      } else if (typeof e.detail === 'object') {
+        // If HTMX passed it wrapped under the event name itself
+        // or as an object value mapping
+        const keys = Object.keys(e.detail);
+        if (keys.length > 0 && Array.isArray(e.detail[keys[0]])) {
+          incomingIds = e.detail[keys[0]];
+        }
+      }
+    }
+
+    // 3. Absolute Type Guard: If it's still not an array, do not crash!
+    if (!incomingIds || !Array.isArray(incomingIds)) {
+      console.error("Failed to find an array. Type of detail is:", typeof e.detail);
+      return;
+    }
+
+    console.log("Successfully resolved array to loop:", incomingIds);
+
+    // 4. Safe iteration using a standard classic loop to avoid prototype errors
+    for (let i = 0; i < incomingIds.length; i++) {
+      const id = String(incomingIds[i]);
+      const cardEl = document.getElementById(`artist-${id}`);
+
+      if (cardEl && window.Alpine) {
+        const localData = window.Alpine.$data(cardEl);
+        if (localData && localData.artist) {
+          const promptStore = Alpine.store('promptStore');
+          const alreadyAdded = promptStore.selectedArtists.some(a => a.id === id);
+
+          if (!alreadyAdded) {
+            promptStore.toggle(localData.artist);
+          }
+        }
+      }
+    }
+  });
+
 document.addEventListener('alpine:init', () => {
   Alpine.store('promptStore', {
     selectedArtists: [],
@@ -206,10 +258,13 @@ document.addEventListener('alpine:init', () => {
   </div>
   <div class="grid-item-content">
     <h3 class="grid-item-title">
-      <input type="checkbox"
+    <input type="checkbox"
              class="artist-checkbox"
+             hx-get="/artists/similar-ids/{{.ID}}"
+             hx-trigger="click[ctrlKey]"
+             hx-swap="none"
              :checked="$store.promptStore.selectedArtists.some(a => a.id === artist.id)"
-             @change="$store.promptStore.toggle(artist)">
+             @click="if ($event.ctrlKey) { $event.preventDefault(); } else { $store.promptStore.toggle(artist); }">
       <a :href="artist.google" target="_blank">{{.Name}}</a>
     </h3>
     <p class="grid-item-description">{{.Description}}
@@ -230,6 +285,8 @@ document.addEventListener('alpine:init', () => {
   </div>
 </div>
 {{end}}
+
+
 
 {{define "edit_form_content"}}
 <form hx-post="/artists/update/{{.ID}}" hx-target="#artist-{{.ID}}" hx-swap="outerHTML" hx-encoding="multipart/form-data">

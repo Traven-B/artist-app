@@ -3,13 +3,16 @@ package main
 import (
 	// "bufio"
 	// "bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
+	"math" // Added for vector similarity calculations
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort" // Added for ranking closest matches
 	"strconv"
 	"strings"
 	"time"
@@ -23,7 +26,8 @@ type ArtistRecord struct {
 	Description string
 	ImgURL      string
 	Thumb       string
-	Features    string // New field for feature data
+	Features    string    // Feature data string
+	Vector      []float64 // Server-side vector embeddings array (never leaves the server)
 }
 
 type FormData struct {
@@ -31,7 +35,7 @@ type FormData struct {
 	OriginalName string
 	Desc         string
 	ImgURL       string
-	Features     string // New field for form data
+	Features     string // Form input data
 
 	NameMsg string
 	DescMsg string
@@ -60,6 +64,25 @@ var globalToAddList []string
 var dataDir = "data"     // Default prod
 var imagesDir = "images" // Default prod
 
+// --- Vector Math Engine (Server-Side Only) ---
+
+// cosineSimilarity calculates how close two vectors are (returns a value between -1.0 and 1.0)
+func cosineSimilarity(v1, v2 []float64) float64 {
+	if len(v1) != len(v2) || len(v1) == 0 {
+		return 0.0
+	}
+	var dotProduct, normA, normB float64
+	for i := 0; i < len(v1); i++ {
+		dotProduct += v1[i] * v2[i]
+		normA += v1[i] * v1[i]
+		normB += v2[i] * v2[i]
+	}
+	if normA == 0 || normB == 0 {
+		return 0.0
+	}
+	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB))
+}
+
 // --- File IO ---
 
 func ReadMasterList(filename string) ([]ArtistRecord, error) {
@@ -76,6 +99,7 @@ func ReadMasterList(filename string) ([]ArtistRecord, error) {
 		lines := strings.Split(block, "\n")
 		var rec ArtistRecord
 		for _, line := range lines {
+			line = strings.TrimSpace(line)
 			if strings.HasPrefix(line, "id:") {
 				rec.ID, _ = strconv.Atoi(strings.TrimSpace(line[3:]))
 			} else if strings.HasPrefix(line, "n:") {
@@ -84,8 +108,20 @@ func ReadMasterList(filename string) ([]ArtistRecord, error) {
 				rec.Description = strings.TrimSpace(line[2:])
 			} else if strings.HasPrefix(line, "t:") {
 				rec.Thumb = strings.TrimSpace(line[2:])
-			} else if strings.HasPrefix(line, "f:") { // Parse new feature field
+			} else if strings.HasPrefix(line, "f:") {
 				rec.Features = strings.TrimSpace(line[2:])
+			} else if strings.HasPrefix(line, "ef:") {
+				// Parse custom comma-separated vector values if present in data file
+				vecStr := strings.TrimSpace(line[2:])
+				if vecStr != "" {
+					parts := strings.Split(vecStr, ",")
+					for _, p := range parts {
+						val, err := strconv.ParseFloat(strings.TrimSpace(p), 64)
+						if err == nil {
+							rec.Vector = append(rec.Vector, val)
+						}
+					}
+				}
 			}
 		}
 		records = append(records, rec)
@@ -146,11 +182,81 @@ func addArtistPage(w http.ResponseWriter, r *http.Request) {
 		IsTestMode: dataDir == "test_data",
 	}
 
-	// not executing add_artist_page , doing flat top index , probably rename everything here eventually
 	err := templates.ExecuteTemplate(w, "index", data)
 	if err != nil {
 		http.Error(w, "Template error: "+err.Error(), 500)
 	}
+}
+
+// Real-Time Vector Similarity Handler
+func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/artists/similar-ids/")
+	targetID, _ := strconv.Atoi(idStr)
+
+	// 1. Locate the target artist from memory
+	var targetArtist ArtistRecord
+	found := false
+	for _, a := range globalMasterList {
+		if a.ID == targetID {
+			targetArtist = a
+			found = true
+			break
+		}
+	}
+
+	// Dynamic Fallback: If artist isn't found or doesn't have vectors yet, default to canned indexes safely
+	if !found || len(targetArtist.Vector) == 0 {
+		cannedIDs := []int{targetID, targetID + 1, targetID + 2, targetID + 3}
+		responseMap := map[string][]int{"ids": cannedIDs}
+		jsonIDs, _ := json.Marshal(responseMap)
+		w.Header().Set("HX-Trigger", fmt.Sprintf(`{"checkSimilarArtists": %s}`, string(jsonIDs)))
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Struct to keep track of dynamic comparison rankings
+	type match struct {
+		id    int
+		score float64
+	}
+	var matches []match
+
+	// 2. Compute similarity scores across all other 160+ artists
+	for _, a := range globalMasterList {
+		if a.ID == targetID || len(a.Vector) == 0 {
+			continue // Skip self and entries lacking embeddings
+		}
+		score := cosineSimilarity(targetArtist.Vector, a.Vector)
+		matches = append(matches, match{id: a.ID, score: score})
+	}
+
+	// 3. Sort closest neighbors (highest decimal scores first)
+	sort.Slice(matches, func(i, j int) bool {
+		return matches[i].score > matches[j].score
+	})
+
+	// 4. Extract top 3 matches
+	limit := 3
+	if len(matches) < limit {
+		limit = len(matches)
+	}
+
+	// Include clicked artist ID first, followed by computed neighbors
+	computedIDs := []int{targetID}
+	for i := 0; i < limit; i++ {
+		computedIDs = append(computedIDs, matches[i].id)
+	}
+
+	// 5. Serialize lightweight IDs string to fire custom UI event trigger
+	responseMap := map[string][]int{"ids": computedIDs}
+	jsonIDs, err := json.Marshal(responseMap)
+	if err != nil {
+		http.Error(w, "JSON error", 500)
+		return
+	}
+
+	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"checkSimilarArtists": %s}`, string(jsonIDs)))
+	w.WriteHeader(http.StatusOK)
 }
 
 func galleryPage(w http.ResponseWriter, r *http.Request) {
@@ -168,7 +274,6 @@ func galleryPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// htmx handler: populate form with selected name
 func populateFormHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	data := AddArtistPageData{
@@ -176,7 +281,7 @@ func populateFormHandler(w http.ResponseWriter, r *http.Request) {
 			Name:         name,
 			OriginalName: name,
 			NameMsg:      "",
-			Features:     "", // Initialize features for populate form
+			Features:     "",
 		},
 	}
 	// Only render the form partial
@@ -188,12 +293,12 @@ func populateFormHandler(w http.ResponseWriter, r *http.Request) {
 
 // htmx handler: check for duplicates and update the whole form
 func checkNameHandler(w http.ResponseWriter, r *http.Request) {
-	name := strings.TrimSpace(r.FormValue("name")) // <- trim spaces
+	name := strings.TrimSpace(r.FormValue("name"))
 	originalName := r.FormValue("original_name")
 	msg := ""
 	// Search master list for duplicate (case-insensitive)
 	for _, rec := range globalMasterList {
-		if strings.EqualFold(strings.TrimSpace(rec.Name), name) { // <- also trim stored name
+		if strings.EqualFold(strings.TrimSpace(rec.Name), name) {
 			msg = "This name is already in the master list!"
 			break
 		}
@@ -377,7 +482,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	originalName := strings.TrimSpace(r.FormValue("original_name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
 	imgURL := strings.TrimSpace(r.FormValue("img_url"))
-
 	features := strings.TrimSpace(r.FormValue("features")) // Get features from form
 
 	var nameMsg, descMsg, imgMsg string
@@ -413,7 +517,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				OriginalName: originalName,
 				Desc:         desc,
 				ImgURL:       imgURL,
-				Features:     features, // Pass back features from form for re-display
+				Features:     features,
 				NameMsg:      nameMsg,
 				DescMsg:      descMsg,
 				ImgMsg:       imgMsg,
@@ -464,7 +568,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				OriginalName: originalName,
 				Desc:         desc,
 				ImgURL:       imgURL,
-				Features:     features, // Preserve features data
+				Features:     features,
 				ImgMsg:       imgMsg,
 			},
 		}
@@ -478,7 +582,8 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		Name:        name,
 		Description: desc,
 		Thumb:       thumbFile,
-		Features:    features, // Add the new features field
+		Features:    features,
+		Vector:      nil, // Set to nil or call embedding generator here when adding live
 	}
 	globalMasterList = append(globalMasterList, newRec)
 
@@ -522,10 +627,8 @@ func deleteArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Save the updated master list
 	saveMasterListInternal()
-
 	// Signal to the frontend that this specific artist was deleted
 	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"artist-deleted": {"id": "%s"}}`, idStr))
-
 	// Return 200 OK with empty body. hx-swap="outerHTML" will remove the element.
 	w.WriteHeader(http.StatusOK)
 }
@@ -565,7 +668,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.TrimSpace(r.FormValue("name"))
 	desc := strings.TrimSpace(r.FormValue("desc"))
-	features := strings.TrimSpace(r.FormValue("features")) // Get features from form
+	features := strings.TrimSpace(r.FormValue("features"))
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
@@ -628,7 +731,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 						Name:        name,
 						Description: desc,
 						Thumb:       rec.Thumb,
-						Features:    features, // Pass back features from form for re-display
+						Features:    features,
 					},
 					NameMsg: nameMsg,
 					DescMsg: descMsg,
@@ -649,7 +752,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			globalMasterList[i].Name = name
 			globalMasterList[i].Description = desc
-			globalMasterList[i].Features = features // Update features from form
+			globalMasterList[i].Features = features
 
 			saveMasterListInternal()
 
@@ -670,7 +773,14 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 func saveMasterListInternal() {
 	var builder strings.Builder
 	for _, rec := range globalMasterList {
-		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features))
+		// Re-serialize features along with vectors if they exist
+		var vecParts []string
+		for _, val := range rec.Vector {
+			vecParts = append(vecParts, fmt.Sprintf("%g", val))
+		}
+		vecStr := strings.Join(vecParts, ",")
+
+		builder.WriteString(fmt.Sprintf("id:%d\nn:%s\nd:%s\nt:%s\nf:%s\nef:%s\n\n", rec.ID, rec.Name, rec.Description, rec.Thumb, rec.Features, vecStr))
 	}
 	_ = os.WriteFile(filepath.Join(dataDir, "artists_master.txt"), []byte(builder.String()), 0644)
 }
@@ -678,7 +788,6 @@ func saveMasterListInternal() {
 // --- Main ---
 
 func main() {
-
 	templates = template.Must(template.ParseFiles(
 		"templates/index.tmpl",
 		"templates/artist_form.tmpl",
@@ -699,9 +808,6 @@ func main() {
 	// Log what we're using
 	log.Printf("Using data dir: %s, images dir: %s", dataDir, imagesDir)
 
-	// return
-
-	// Load lists using NEW paths
 	var err error
 	globalMasterList, err = ReadMasterList(filepath.Join(dataDir, "artists_master.txt"))
 	if err != nil {
@@ -712,22 +818,12 @@ func main() {
 		log.Fatal("Error reading to-add list:", err)
 	}
 
-	// // Load lists from files
-	// var err error
-	// globalMasterList, err = ReadMasterList("data/artists_master.txt")
-	// if err != nil {
-	// 	log.Fatal("Error reading master list:", err)
-	// }
-	// globalToAddList, err = ReadToAddList("data/artists_to_add.txt")
-	// if err != nil {
-	// 	log.Fatal("Error reading to-add list:", err)
-	// }
-
 	http.HandleFunc("/", addArtistPage)
 	http.HandleFunc("/gallery", galleryPage)
+	http.HandleFunc("/artists/similar-ids/", artistSimilarIDsHandler)
 	http.HandleFunc("/populate-form", populateFormHandler)
 	http.HandleFunc("/check-name", checkNameHandler)
-	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler) // we may still call this with htmxx but from are you sure dialog
+	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler)
 	http.HandleFunc("/confirm-delete-todo-form", confirmDeleteTodoFormHandler)
 	http.HandleFunc("/cancel-add-form", cancelAddFormHandler)
 	http.HandleFunc("/submit-artist-add-form", submitArtistAddFormHandler)

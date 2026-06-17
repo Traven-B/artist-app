@@ -10,7 +10,7 @@ PHRASES = [
   "art nouveau", "art deco", "woodblock print", "mid century", "oil on canvas",
   "city pop", "post impressionist", "shin hanga", "ukiyo e", "digital painting",
   "fine art", "fashion illustration", "concept artist", "graphic designer",
-  "comic book", "street art", "pop surrealism", "new objectivity", "lowbrow art"
+  "comic book", "street art", "pop surrealism", "new objectivity", "lowbrow art",
 ]
 
 STOPWORDS = Set.new([
@@ -18,19 +18,19 @@ STOPWORDS = Set.new([
   "artist", "painter", "illustrator", "born", "known", "style", "work", "his",
   "her", "was", "an", "who", "which", "from", "at", "also", "its", "their",
   "one", "featured", "including", "depicting", "characterized", "often", "use",
-  "used", "using", "into", "features", "through", "well", "became", "both"
+  "used", "using", "into", "features", "through", "well", "became", "both",
 ])
 
 def tokenize(text)
   t = text.downcase
-  
+
   # Bind phrases together so they are treated as single tokens
-  PHRASES.each { |p| t.gsub!(p, p.gsub(' ', '_')) }
-  
+  PHRASES.each { |p| t.gsub!(p, p.gsub(" ", "_")) }
+
   t.gsub(/[^a-z0-9_\s]/, " ")
    .split
    .reject { |w| STOPWORDS.include?(w) || w.length < 3 }
-   .map { |w| w.gsub(/(ing|ism|ist|ed|s)$/, '') } # Lightweight stemming
+   .map { |w| w.gsub(/(ing|ism|ist|ed|s)$/, "") } # Lightweight stemming
 end
 
 # 1. Precompute Inverse Document Frequency (IDF)
@@ -38,11 +38,11 @@ end
 def compute_idf(all_artists)
   total = all_artists.size.to_f
   df = Hash.new(0)
-  
+
   all_artists.each do |a|
     tokenize(a[:desc]).uniq.each { |word| df[word] += 1 }
   end
-  
+
   idf = {}
   df.each { |word, count| idf[word] = Math.log(total / count) }
   idf
@@ -55,7 +55,7 @@ def get_vector(artist)
   tokens = tokenize(artist[:desc])
   counts = Hash.new(0)
   tokens.each { |t| counts[t] += 1 }
-  
+
   vector = {}
   counts.each do |word, freq|
     # TF * IDF
@@ -74,17 +74,17 @@ def similarity(vec_a, vec_b)
   return 0.0 if intersection.empty?
 
   dot_product = intersection.reduce(0.0) { |sum, w| sum + (vec_a[w] * vec_b[w]) }
-  
-  mag_a = Math.sqrt(vec_a.values.reduce(0.0) { |sum, v| sum + v**2 })
-  mag_b = Math.sqrt(vec_b.values.reduce(0.0) { |sum, v| sum + v**2 })
-  
+
+  mag_a = Math.sqrt(vec_a.values.reduce(0.0) { |sum, v| sum + v ** 2 })
+  mag_b = Math.sqrt(vec_b.values.reduce(0.0) { |sum, v| sum + v ** 2 })
+
   return 0.0 if mag_a == 0 || mag_b == 0
   dot_product / (mag_a * mag_b)
 end
 
 def top_similar(artist, all, k = 3)
   vec_target = ARTIST_VECTORS[artist[:id]]
-  
+
   all
     .reject { |a| a[:id] == artist[:id] }
     .map { |other| [other, similarity(vec_target, ARTIST_VECTORS[other[:id]])] }
@@ -93,7 +93,8 @@ def top_similar(artist, all, k = 3)
 end
 
 # Example usage (matching simple.rb target):
-target = ARTISTS[118] # Gwen Fremlin
+# target = ARTISTS[72] # Gwen Fremlin
+target = ARTISTS[151]
 puts "Target: #{target[:name]}"
 puts "Description: #{target[:desc]}"
 puts "-" * 40
