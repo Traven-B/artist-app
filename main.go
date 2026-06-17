@@ -696,9 +696,21 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 		Description: desc,
 		Thumb:       thumbFile,
 		Features:    features,
-		Vector:      nil, // Vector is no longer stored in ArtistRecord, but will be generated/read from artists_feature_vectors.txt
+		Vector:      nil, // Vector is no longer stored in ArtistRecord for persistence
 	}
 	globalMasterList = append(globalMasterList, newRec)
+
+	// Save the new artist's vector to globalFeatureVectors and persist
+	if features != "" {
+		vector, err := getVectorFromGemini(features)
+		if err != nil {
+			log.Printf("Error getting vector for artist %s (ID %d): %v", name, newID, err)
+			// Decide if this should be a critical error or just log and continue without vector
+		} else {
+			globalFeatureVectors[newID] = vector
+			saveFeatureVectorsInternal() // Save updated feature vectors
+		}
+	}
 
 	saveMasterListInternal()
 
