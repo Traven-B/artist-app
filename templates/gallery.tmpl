@@ -179,6 +179,11 @@ window.addEventListener('checkSimilarArtists', function(e) {
 
     console.log("Successfully resolved array to loop:", incomingIds);
 
+    // Clear the working list before adding new semantic matches
+    if (window.Alpine) {
+      Alpine.store('promptStore').clear();
+    }
+
     // 4. Safe iteration using a standard classic loop to avoid prototype errors
     for (let i = 0; i < incomingIds.length; i++) {
       const id = String(incomingIds[i]);
