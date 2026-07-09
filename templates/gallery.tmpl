@@ -69,15 +69,15 @@
   </div>
 
   <!-- Semantic Search Input -->
-  <div style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+  <form hx-get="/artists/search" 
+        hx-swap="none" 
+        style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 0.5rem; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
     <input type="search" 
            name="q" 
            placeholder="Search artists by arbitrary visual style or phrase..." 
-           hx-get="/artists/search" 
-           hx-trigger="keyup changed delay:500ms, search" 
-           hx-swap="none" 
-           style="width: 100%; max-width: 600px;">
-  </div>
+           style="margin-bottom: 0; flex-grow: 1;">
+    <button type="submit" style="width: auto; margin-bottom: 0;">Search</button>
+  </form>
 
   <div style="display:flex; gap:1rem; align-items:flex-start; min-height: 720px;">
 
