@@ -41,17 +41,6 @@
       </ul>
     </nav>
   </header>
-  
-  <!-- Semantic Search Input -->
-  <div class="container" style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
-    <input type="search" 
-           name="q" 
-           placeholder="Search artists by arbitrary visual style or phrase..." 
-           hx-get="/artists/search" 
-           hx-trigger="keyup changed delay:500ms, search" 
-           hx-swap="none" 
-           style="width: 100%; max-width: 600px;">
-  </div>
 
   <!-- Wide Grid Section -->
   <div class="wide-where-grid-goes">
@@ -77,6 +66,17 @@
   <div style="text-align:center; padding:1rem;">
     <button class="outline" @click="$store.promptStore.clear()">Clear All</button>
     <button class="contrast" @click="$store.promptStore.copyPrompt()">Copy Checked</button>
+  </div>
+
+  <!-- Semantic Search Input -->
+  <div style="margin-bottom: 1.5rem; display: flex; justify-content: center;">
+    <input type="search" 
+           name="q" 
+           placeholder="Search artists by arbitrary visual style or phrase..." 
+           hx-get="/artists/search" 
+           hx-trigger="keyup changed delay:500ms, search" 
+           hx-swap="none" 
+           style="width: 100%; max-width: 600px;">
   </div>
 
   <div style="display:flex; gap:1rem; align-items:flex-start; min-height: 720px;">
