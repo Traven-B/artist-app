@@ -41,6 +41,7 @@ Notes:
 ### Obtaining a Google Gemini API Key
 
 A free API key is required to utilize the application's AI-powered features (semantic search and artist similarity). You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
+The free tier for the embedding model (Gemini Embedding 1) is quite generous, allowing for a high volume of requests without noticeable contention or waiting.
 
 ---
 
