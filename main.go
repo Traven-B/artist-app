@@ -84,6 +84,46 @@ func cosineSimilarity(v1, v2 []float64) float64 {
 	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB))
 }
 
+type match struct {
+	id    int
+	score float64
+}
+
+// rankArtistsByVector computes cosine similarity scores against all artists in the master list,
+// sorts them, and returns the top matches. Optionally excludes a specific ID (e.g., self).
+func rankArtistsByVector(targetVector []float64, limit int, excludeID int) []int {
+	if len(targetVector) == 0 {
+		return nil
+	}
+
+	var matches []match
+	for _, a := range globalMasterList {
+		if a.ID == excludeID {
+			continue
+		}
+		aVector, aHasVector := globalFeatureVectors[a.ID]
+		if !aHasVector || len(aVector) == 0 {
+			continue
+		}
+		score := cosineSimilarity(targetVector, aVector)
+		matches = append(matches, match{id: a.ID, score: score})
+	}
+
+	sort.Slice(matches, func(i, j int) bool {
+		return matches[i].score > matches[j].score
+	})
+
+	if len(matches) < limit {
+		limit = len(matches)
+	}
+
+	results := make([]int, 0, limit)
+	for i := 0; i < limit; i++ {
+		results = append(results, matches[i].id)
+	}
+	return results
+}
+
 // getVectorFromGemini requests a vector from Google's gemini-embedding-001 endpoint
 func getVectorFromGemini(text string) ([]float64, error) {
 	api_key := os.Getenv("GEMINI_API_KEY")
@@ -323,51 +363,50 @@ func artistSimilarIDsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Struct to keep track of dynamic comparison rankings
-	type match struct {
-		id    int
-		score float64
-	}
-	var matches []match
-
-	// 2. Compute similarity scores across all other 160+ artists
-	for _, a := range globalMasterList {
-		if a.ID == targetID {
-			continue // Skip self
-		}
-		aVector, aHasVector := globalFeatureVectors[a.ID]
-		if !aHasVector || len(aVector) == 0 {
-			continue // Skip entries lacking embeddings
-		}
-		score := cosineSimilarity(targetVector, aVector)
-		matches = append(matches, match{id: a.ID, score: score})
-	}
-
-	// 3. Sort closest neighbors (highest decimal scores first)
-	sort.Slice(matches, func(i, j int) bool {
-		return matches[i].score > matches[j].score
-	})
-
-	// 4. Extract top 3 matches
-	limit := 3
-	if len(matches) < limit {
-		limit = len(matches)
-	}
+	// Reuse rank helper
+	computedIDs := rankArtistsByVector(targetVector, 3, targetID)
 
 	// Include clicked artist ID first, followed by computed neighbors
-	computedIDs := []int{targetID}
-	for i := 0; i < limit; i++ {
-		computedIDs = append(computedIDs, matches[i].id)
-	}
+	finalIDs := append([]int{targetID}, computedIDs...)
 
 	// 5. Serialize lightweight IDs string to fire custom UI event trigger
-	responseMap := map[string][]int{"ids": computedIDs}
+	responseMap := map[string][]int{"ids": finalIDs}
 	jsonIDs, err := json.Marshal(responseMap)
 	if err != nil {
 		http.Error(w, "JSON error", 500)
 		return
 	}
 
+	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"checkSimilarArtists": %s}`, string(jsonIDs)))
+	w.WriteHeader(http.StatusOK)
+}
+
+func artistSearchHandler(w http.ResponseWriter, r *http.Request) {
+	query := strings.TrimSpace(r.FormValue("q"))
+	if query == "" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Fetch embedding for the search phrase
+	queryVector, err := getVectorFromGemini(query)
+	if err != nil {
+		log.Printf("Embedding error for query '%s': %v", query, err)
+		http.Error(w, "Failed to compute embedding query", 500)
+		return
+	}
+
+	// Rank all artists (limit top 5 matches, do not exclude any ID)
+	matchIDs := rankArtistsByVector(queryVector, 5, 0)
+
+	responseMap := map[string][]int{"ids": matchIDs}
+	jsonIDs, err := json.Marshal(responseMap)
+	if err != nil {
+		http.Error(w, "JSON error", 500)
+		return
+	}
+
+	// Reuses the exact same frontend HTMX/Alpine event pipeline!
 	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"checkSimilarArtists": %s}`, string(jsonIDs)))
 	w.WriteHeader(http.StatusOK)
 }
@@ -971,6 +1010,7 @@ func main() {
 	http.HandleFunc("/", addArtistPage)
 	http.HandleFunc("/gallery", galleryPage)
 	http.HandleFunc("/artists/similar-ids/", artistSimilarIDsHandler)
+	http.HandleFunc("/artists/search", artistSearchHandler)
 	http.HandleFunc("/populate-form", populateFormHandler)
 	http.HandleFunc("/check-name", checkNameHandler)
 	http.HandleFunc("/delete-todo-form", deleteTodoFormHandler)
