@@ -1,6 +1,6 @@
 # ArtistApp
 
-Perfect for the computer hobbyist or Artbreeder enthusiast! You just need a Go compiler – no JavaScript framework, no database – just compile and go.
+Perfect for the computer hobbyist or Artbreeder enthusiast! You just need a Go compiler and a free Google Gemini API key – no JavaScript framework, no database – just compile and go.
 
 A small Go + HTMX + Alpine.js app for collecting artist names, building a gallery,
 and generating “art by …” prompt fragments for tools like Artbreeder.
@@ -35,6 +35,12 @@ Notes:
     - the `⋯` char as link in each artist card reveals edit and delete links.
     - the check mark buttons on each grid element cause an artist to be added to the working set playground at bottom of the page,
     - the copy checked button at bottom of the page copies the subset of artists with their check mark set to  the clipboard.
+- The Gallery also features semantic search, allowing you to find artists based on arbitrary visual style or phrase.
+- You can also find artists similar to a selected artist based on their extracted features.
+
+### Obtaining a Google Gemini API Key
+
+A free API key is required to utilize the application's AI-powered features (semantic search and artist similarity). You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
 
 ---
 
