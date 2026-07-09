@@ -40,10 +40,19 @@ Notes:
 
 ### Obtaining a Google Gemini API Key
 
-A free API key is required to utilize the application's AI-powered features (semantic search and artist similarity). You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
+A free API key is required both for adding artists with AI-generated feature vectors (essential for semantic search and similarity) and for using the semantic search functionality on the gallery page. You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
 The free tier for the embedding model (Gemini Embedding 1) is quite generous, allowing for a high volume of requests without noticeable contention or waiting.
 
 ---
+
+### Setting the GEMINI_API_KEY
+
+Before running the application, you need to set your Google Gemini API key as an environment variable named `GEMINI_API_KEY`. This is crucial for adding new artists with feature vectors and for using the semantic search on the gallery page.
+
+Example (Linux/macOS):
+```bash
+export GEMINI_API_KEY="YOUR_API_KEY_HERE"
+```
 
 ## Clone the repo
 
