@@ -27,7 +27,7 @@ Notes:
 
 **Index Page UI:** On the GitHub Pages demo, clicking **Delete** triggers the **backdrop/overlay** but does not launch a functional modal. To clear the overlay and return to the page, you must press the **Esc** key.
 
-**Functionality:**
+**Functionality** of the static **demo**:
 
 - The Google Search links on the Index and Gallery pages are functional.
 - Form submissions, updates,  and deletions require the Go backend to be running locally; they do not process on the static demo.
@@ -35,8 +35,6 @@ Notes:
     - the `⋯` char as link in each artist card reveals edit and delete links.
     - the check mark buttons on each grid element cause an artist to be added to the working set playground at bottom of the page,
     - the copy checked button at bottom of the page copies the subset of artists with their check mark set to  the clipboard.
-- The Gallery also features semantic search, allowing you to find artists based on arbitrary visual style or phrase.
-- You can also find artists similar to a selected artist based on their extracted features.
 
 ### Obtaining a Google Gemini API Key
 
