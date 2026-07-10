@@ -253,35 +253,25 @@ The fun feature of this todo list and form page, is we use HTMX to get new rende
 
 Once rendered, the gallery page is static.
 
-Main idea:
+### Interactive Gallery Features
 
--   Check artist cards
+The gallery provides several interactive ways to build your prompt list:
 
--   Click **Generate Prompt**
-
--   Get text like:
-
-
-```
-art by Tom Bagshaw,
-art by Picasso,
-```
-
-This can be copied to the clipboard and then pasted into an Artbreeder prompt.
-
+*   **Check artist cards**: Simply checking an artist card adds it to the working list at the bottom of the page.
+*   **Ctrl-Click on artist cards**: Performing a `Ctrl-Click` on an artist card will add that artist along with its three most semantically similar artists to the working list at the bottom of the page.
+*   **Semantic Search**: Enter an arbitrary search term into the search input bar above the working list and click "Search". The application will find artists whose features are semantically similar to your search term and add the top matches to the working list.
 
 ### Working list + copy flow
 
 
 Selecting text is awkward due to checkboxes and controls, so:
 
-Copy Checked copies only the checked art by … lines
+*   **Copy Checked**: This button copies only the text from the checked "art by..." lines in the working list to your clipboard.
 
 You can:
 
-reorder names with up/down arrows
-
-include some or all of the working set
+*   reorder names with up/down arrows
+*   include some or all of the working set (by checking/unchecking the artist's entry)
 
 If order matters in your prompt, you control it here.
 
