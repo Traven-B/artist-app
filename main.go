@@ -252,12 +252,15 @@ func ReadFeatureVectors(filename string) (map[int][]float64, error) {
 		}
 		lines := strings.Split(block, "\n")
 		var id int
-		var vector []float64
+		var vector []float64 // Declared here, so it's fresh for each block
+		var efLineFound bool // Added to track if an 'ef:' line was encountered
+
 		for _, line := range lines {
 			line = strings.TrimSpace(line)
 			if strings.HasPrefix(line, "id:") {
 				id, _ = strconv.Atoi(strings.TrimSpace(line[3:]))
 			} else if strings.HasPrefix(line, "ef:") {
+				efLineFound = true // Mark that an 'ef:' line was encountered
 				vecStr := strings.TrimSpace(line[3:])
 				if vecStr != "" {
 					parts := strings.Split(vecStr, ",")
@@ -272,8 +275,9 @@ func ReadFeatureVectors(filename string) (map[int][]float64, error) {
 				}
 			}
 		}
-		if id != 0 && len(vector) > 0 {
-			featureVectors[id] = vector
+		// Add ID to map if found AND an 'ef:' line was found, regardless of vector length
+		if id != 0 && efLineFound {
+			featureVectors[id] = vector // This will be empty []float64{} if ef: was empty or malformed
 		}
 	}
 	return featureVectors, nil
@@ -449,11 +453,13 @@ func populateFormHandler(w http.ResponseWriter, r *http.Request) {
 func checkNameHandler(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("name"))
 	originalName := r.FormValue("original_name")
-	msg := ""
+	features := r.FormValue("features") // Preserve features, as they are part of the form state
+	nameMsg := ""
+	
 	// Search master list for duplicate (case-insensitive)
 	for _, rec := range globalMasterList {
 		if strings.EqualFold(strings.TrimSpace(rec.Name), name) {
-			msg = "This name is already in the master list!"
+			nameMsg = "This name is already in the master list!"
 			break
 		}
 	}
@@ -462,7 +468,8 @@ func checkNameHandler(w http.ResponseWriter, r *http.Request) {
 		FormData: FormData{
 			Name:         name,
 			OriginalName: originalName,
-			NameMsg:      msg,
+			NameMsg:      nameMsg,
+			Features:	  features, // Preserve features in the form data
 		},
 	}
 	// Only render the form partial
@@ -795,6 +802,10 @@ func deleteArtistHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	// Remove from feature vectors map as well
+	delete(globalFeatureVectors, id)
+	saveFeatureVectorsInternal() // Persist the change to feature vectors file
 
 	// Save the updated master list
 	saveMasterListInternal()
