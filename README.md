@@ -1,21 +1,50 @@
 # ArtistApp
 
-Perfect for the computer hobbyist or Artbreeder enthusiast! You just need a Go compiler and a free Google Gemini API key – no JavaScript framework, no database – just compile and go.
+👉 **[Try the gallery demo](https://traven-b.github.io/artist-app/artist-gallery.html)**
+
+Perfect for the computer hobbyist or Artbreeder enthusiast!
 
 A small Go + HTMX + Alpine.js app for collecting artist names, building a gallery,
-and generating “art by …” prompt fragments for tools like Artbreeder.
+and generating “art by …” prompt fragments for image generation tools.
 
-The 'output' of the app is to have the Gallery page generate text like:
+No JavaScript framework build system, no database, just compile and go.
+
+A Google Gemini API key is optional. The app runs without one, but enabling it
+adds AI-generated feature vectors for semantic search and artist similarity.
+The key is free to obtain, and the embeddings endpoint is available within
+Google's free usage limits for hobby-scale use.
+
+The output of the app is a Gallery page that can generate text like:
 
 ```
 art by Tom Bagshaw,
 art by Picasso,
 ```
 
-This can be copied to the clipboard and then pasted into an Artbreeder prompt.
+This can be copied to the clipboard and pasted into an Artbreeder prompt.
 
+## Quick start note on API Key
+
+The app can be run without any external API keys.
+
+Without a Gemini API key you can still:
+
+- add and edit artists
+- upload images
+- browse the gallery
+- use existing precomputed similarity vectors
+
+When a Gemini API key is available, the app generates embeddings for new or
+updated artist feature descriptions and enables semantic search.
+
+If embedding generation fails, artist data is still saved. The missing embedding
+is recorded for later repair.
+
+A Gemini API key is free to obtain and free within Google's usage limits.
 
 ## Demo (GitHub Pages)
+
+Static preview of the UI:
 
 - **Gallery demo:** \\
   <https://traven-b.github.io/artist-app/artist-gallery.html>
@@ -23,23 +52,30 @@ This can be copied to the clipboard and then pasted into an Artbreeder prompt.
 - **Index / add-artists page:** \\
   <https://traven-b.github.io/artist-app/index.html>
 
-Notes:
+The GitHub Pages demo is a static frontend snapshot. Backend features require
+running the Go application locally.
 
-**Index Page UI:** On the GitHub Pages demo, clicking **Delete** triggers the **backdrop/overlay** but does not launch a functional modal. To clear the overlay and return to the page, you must press the **Esc** key.
 
-**Functionality** of the static **demo**:
+## Quick start note on API KEY
 
-- The Google Search links on the Index and Gallery pages are functional.
-- Form submissions, updates,  and deletions require the Go backend to be running locally; they do not process on the static demo.
-- Some buttons on the Gallery page work,
-    - the `⋯` char as link in each artist card reveals edit and delete links.
-    - the check mark buttons on each grid element cause an artist to be added to the working set playground at bottom of the page,
-    - the copy checked button at bottom of the page copies the subset of artists with their check mark set to  the clipboard.
+The app can be run without any external API keys.
+
+A Gemini API key is optional. Without one, you can still:
+- add and edit artists
+- upload images
+- browse the gallery
+- use existing precomputed similarity vectors
+
+Embedding generation uses Gemini when a key is available. If embedding generation fails, the artist data is still saved and the missing embedding is recorded for later repair.
+
+A Gemini API key is free to obtain and free within Google's usage limits:
 
 ### Obtaining a Google Gemini API Key
 
-A free API key is required both for adding artists with AI-generated feature vectors (essential for semantic search and similarity) and for using the semantic search functionality on the gallery page. You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
-The free tier for the embedding model (Gemini Embedding 1) is quite generous, allowing for a high volume of requests without noticeable contention or waiting.
+A Gemini API key is required for generating new feature vectors and using semantic search queries.
+
+You can typically obtain one from the Google AI Studio platform (aistudio.google.com). Look for options to generate or manage API keys.
+The free tier is sufficient for hobby-scale use.
 
 ---
 

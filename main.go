@@ -1,5 +1,10 @@
 package main
 
+// NOTE:
+// Feature vectors are derived data.
+// Empty ef: means vector generation failed or is pending.
+// Never block master record saves on embedding failures.
+
 import (
 	// "bufio"
 	// "bytes"
@@ -37,17 +42,17 @@ type FormData struct {
 	ImgURL       string
 	Features     string // Form input data
 
-	NameMsg string
-	DescMsg string
-	ImgMsg  string
+	NameMsg     string
+	DescMsg     string
+	ImgMsg      string
 	FeaturesMsg string // Added for Features field validation
 }
 
 type EditFormData struct {
 	ArtistRecord
-	NameMsg string
-	DescMsg string
-	ImgMsg  string
+	NameMsg     string
+	DescMsg     string
+	ImgMsg      string
 	FeaturesMsg string // Added for Features field validation
 }
 
@@ -455,7 +460,7 @@ func checkNameHandler(w http.ResponseWriter, r *http.Request) {
 	originalName := r.FormValue("original_name")
 	features := r.FormValue("features") // Preserve features, as they are part of the form state
 	nameMsg := ""
-	
+
 	// Search master list for duplicate (case-insensitive)
 	for _, rec := range globalMasterList {
 		if strings.EqualFold(strings.TrimSpace(rec.Name), name) {
@@ -469,7 +474,7 @@ func checkNameHandler(w http.ResponseWriter, r *http.Request) {
 			Name:         name,
 			OriginalName: originalName,
 			NameMsg:      nameMsg,
-			Features:	  features, // Preserve features in the form data
+			Features:     features, // Preserve features in the form data
 		},
 	}
 	// Only render the form partial
@@ -764,7 +769,6 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	saveFeatureVectorsInternal() // Save updated feature vectors
 
-
 	saveMasterListInternal()
 
 	// Remove name from to-do list if present
@@ -864,7 +868,6 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 			if features == "" { // Features field is now required
 				featuresMsg = "Features are required."
 			}
-
 
 			if nameMsg == "" {
 				for _, other := range globalMasterList {
@@ -985,7 +988,7 @@ func saveMasterListInternal() {
 
 func saveFeatureVectorsInternal() {
 	var builder strings.Builder
-	
+
 	// Collect all IDs
 	var ids []int
 	for id := range globalFeatureVectors {
