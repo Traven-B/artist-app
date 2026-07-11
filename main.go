@@ -40,6 +40,7 @@ type FormData struct {
 	NameMsg string
 	DescMsg string
 	ImgMsg  string
+	FeaturesMsg string // Added for Features field validation
 }
 
 type EditFormData struct {
@@ -47,6 +48,7 @@ type EditFormData struct {
 	NameMsg string
 	DescMsg string
 	ImgMsg  string
+	FeaturesMsg string // Added for Features field validation
 }
 
 type AddArtistPageData struct {
@@ -636,7 +638,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	imgURL := strings.TrimSpace(r.FormValue("img_url"))
 	features := strings.TrimSpace(r.FormValue("features")) // Get features from form
 
-	var nameMsg, descMsg, imgMsg string
+	var nameMsg, descMsg, imgMsg, featuresMsg string
 
 	// Validation
 	if name == "" {
@@ -644,6 +646,9 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if desc == "" {
 		descMsg = "Description is required."
+	}
+	if features == "" { // Features field is now required
+		featuresMsg = "Features are required."
 	}
 
 	// Handle File Upload or URL
@@ -661,7 +666,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If initial validation failed, return form
-	if nameMsg != "" || descMsg != "" || imgMsg != "" {
+	if nameMsg != "" || descMsg != "" || imgMsg != "" || featuresMsg != "" {
 		data := AddArtistPageData{
 			ToAdd: globalToAddList,
 			FormData: FormData{
@@ -673,6 +678,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				NameMsg:      nameMsg,
 				DescMsg:      descMsg,
 				ImgMsg:       imgMsg,
+				FeaturesMsg:  featuresMsg, // Added
 			},
 		}
 		_ = templates.ExecuteTemplate(w, "submit_response", data)
@@ -722,6 +728,7 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 				ImgURL:       imgURL,
 				Features:     features,
 				ImgMsg:       imgMsg,
+				FeaturesMsg:  featuresMsg, // Added
 			},
 		}
 		_ = templates.ExecuteTemplate(w, "submit_response", data)
@@ -740,16 +747,16 @@ func submitArtistAddFormHandler(w http.ResponseWriter, r *http.Request) {
 	globalMasterList = append(globalMasterList, newRec)
 
 	// Save the new artist's vector to globalFeatureVectors and persist
-	if features != "" {
-		vector, err := getVectorFromGemini(features)
-		if err != nil {
-			log.Printf("Error getting vector for artist %s (ID %d): %v", name, newID, err)
-			// Decide if this should be a critical error or just log and continue without vector
-		} else {
-			globalFeatureVectors[newID] = vector
-			saveFeatureVectorsInternal() // Save updated feature vectors
-		}
+	// Since features is now required, this will always attempt to get a vector if validation passes
+	vector, err := getVectorFromGemini(features)
+	if err != nil {
+		log.Printf("Error getting vector for artist %s (ID %d) during add: %v. Storing empty vector.", name, newID, err)
+		globalFeatureVectors[newID] = []float64{} // Explicitly store empty vector if generation fails for new artist
+	} else {
+		globalFeatureVectors[newID] = vector
 	}
+	saveFeatureVectorsInternal() // Save updated feature vectors
+
 
 	saveMasterListInternal()
 
@@ -836,13 +843,17 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i, rec := range globalMasterList {
 		if rec.ID == id {
-			var nameMsg, descMsg, imgMsg string
+			var nameMsg, descMsg, imgMsg, featuresMsg string // Added featuresMsg
 			if name == "" {
 				nameMsg = "Name is required."
 			}
 			if desc == "" {
 				descMsg = "Description is required."
 			}
+			if features == "" { // Features field is now required
+				featuresMsg = "Features are required."
+			}
+
 
 			if nameMsg == "" {
 				for _, other := range globalMasterList {
@@ -886,7 +897,7 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				imgMsg = "Error uploading image."
 			}
 
-			if nameMsg != "" || descMsg != "" || imgMsg != "" {
+			if nameMsg != "" || descMsg != "" || imgMsg != "" || featuresMsg != "" { // Added featuresMsg
 				w.Header().Set("HX-Retarget", "#edit-form-target")
 				w.Header().Set("HX-Reswap", "innerHTML")
 				data := EditFormData{
@@ -895,11 +906,12 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 						Name:        name,
 						Description: desc,
 						Thumb:       rec.Thumb,
-						Features:    features,
+						Features:    features, // Preserve current features for display
 					},
-					NameMsg: nameMsg,
-					DescMsg: descMsg,
-					ImgMsg:  imgMsg,
+					NameMsg:     nameMsg,
+					DescMsg:     descMsg,
+					ImgMsg:      imgMsg,
+					FeaturesMsg: featuresMsg, // Added
 				}
 				_ = templates.ExecuteTemplate(w, "edit_form_content", data)
 				return
@@ -914,10 +926,26 @@ func updateArtistHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			// Check if features text has changed to determine if vector needs regeneration
+			if strings.TrimSpace(globalMasterList[i].Features) != features {
+				globalMasterList[i].Features = features // Update features text in master list
+				vector, err := getVectorFromGemini(features)
+				if err != nil {
+					log.Printf("Error getting vector for artist %s (ID %d) during update: %v. Storing empty vector.", name, id, err)
+					globalFeatureVectors[id] = []float64{} // Store explicit empty vector on failure
+				} else {
+					globalFeatureVectors[id] = vector
+				}
+				saveFeatureVectorsInternal() // Persist updated feature vectors
+			} else {
+				// Features text unchanged, ensure master list still has the current features
+				// (in case something else cleared it, although not expected with current code)
+				globalMasterList[i].Features = features
+			}
+
 			globalMasterList[i].Name = name
 			globalMasterList[i].Description = desc
-			globalMasterList[i].Features = features
-			globalMasterList[i].Vector = nil // Clear any potential old vector data
+			globalMasterList[i].Vector = nil // Clear any potential old vector data (persisted elsewhere)
 
 			saveMasterListInternal()
 

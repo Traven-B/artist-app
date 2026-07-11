@@ -330,6 +330,9 @@ document.addEventListener('alpine:init', () => {
         {{end}}
         </label>
         <label>Features: <textarea name="features" rows="3">{{.Features}}</textarea>
+        {{if .FeaturesMsg}}
+            <small class="form-help">{{.FeaturesMsg}}</small>
+        {{end}}
         </label>
         <div style="display: flex; gap: 0.5rem;">
             <button type="submit">Save Changes</button>

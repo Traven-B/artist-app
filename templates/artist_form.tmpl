@@ -51,6 +51,9 @@
     </label>
 
     <label>Features: <textarea name="features" rows="3">{{.FormData.Features}}</textarea>
+    {{if .FormData.FeaturesMsg}}
+        <small class="form-help">{{.FormData.FeaturesMsg}}</small>
+    {{end}}
     </label>
 
     <label>Image (File or URL): 
