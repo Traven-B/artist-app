@@ -132,6 +132,7 @@
 
       <strong x-text="$store.promptStore.focusedArtist?.name"></strong>
       <p x-text="$store.promptStore.focusedArtist?.desc"></p>
+      <p><small x-text="$store.promptStore.focusedArtist?.features"></small></p>
 
       <a :href="$store.promptStore.focusedArtist?.google"
          target="_blank">
@@ -268,7 +269,8 @@ document.addEventListener('alpine:init', () => {
             name: '{{.Name | js}}',
             desc: '{{.Description | js}}',
             thumb: 'images/{{if .Thumb}}{{.Thumb}}{{else}}{{.ID}}.jpg{{end}}',
-            google: 'https://www.google.com/search?q=art+by+{{.Name | urlquery}}'
+            google: 'https://www.google.com/search?q=art+by+{{.Name | urlquery}}',
+            features: '{{.Features | js}}'
         }
      }">
   <div class="grid-item-image">
