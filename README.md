@@ -31,6 +31,17 @@ art by Torii Kotondo,
 Features: woodblock print | bijin-ga (female portraits) | delicate linework, vibrant pigments, intimate poses, decorative patterns | shin-hanga | early 20th-century Japan
 ```
 
+or the middle button cant put this in the clipboard, two artists who both worked on the original Mirror's Edge game.
+
+```
+Johannes Söderqvist:
+digital painting | moody landscapes, light, solitude | cinematic lighting, soft focus, high contrast, atmospheric depth | emotive realism | modern digital art
+
+Pierre Hannah:
+digital illustration | portraits, fashion, subcultures | vibrant palettes, clean linework, graphic patterns | contemporary pop-realism | modern editorial & commercial art
+```
+
+
 This can be copied to the clipboard and pasted into an Artbreeder prompt.
 
 The descriptions and semi-structured features text is not difficult to collect. We open google search in AI mode in new tabs, using somewhat elaborate prompts. The vector embeddings of the features works, there doesn't seem to be any contention for the free embedding model.
