@@ -65,7 +65,9 @@
 
   <div style="text-align:center; padding:1rem;">
     <button class="outline" @click="$store.promptStore.clear()">Clear All</button>
-    <button class="contrast" @click="$store.promptStore.copyPrompt()">Copy Checked</button>
+    <button class="contrast" @click="$store.promptStore.copyNames()">Copy Names</button>
+    <button class="contrast" @click="$store.promptStore.copyFeatures()">Copy Features</button>
+    <button class="contrast" @click="$store.promptStore.copyBoth()">Copy Both</button>
   </div>
 
   <!-- Semantic Search Input -->
@@ -246,12 +248,28 @@ document.addEventListener('alpine:init', () => {
       this.focusedId = null
     },
 
-    copyPrompt() {
+    copyNames() {
       const text = this.selectedArtists
         .filter(a => a.checked)
         .map(a => `art by ${a.name},`)
         .join('\n')
       navigator.clipboard.writeText(text)
+    },
+
+    copyFeatures() {
+        const text = this.selectedArtists
+            .filter(a => a.checked)
+            .map(a => `${a.name}:\n${a.features}`)
+            .join('\n\n')
+        navigator.clipboard.writeText(text)
+    },
+
+    copyBoth() {
+        const text = this.selectedArtists
+            .filter(a => a.checked)
+            .map(a => `art by ${a.name},\nFeatures: ${a.features}`)
+            .join('\n\n')
+        navigator.clipboard.writeText(text)
     }
   })
 })
