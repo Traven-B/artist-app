@@ -21,7 +21,19 @@ art by Tom Bagshaw,
 art by Picasso,
 ```
 
+or like this, (here 'similar' artists and the features the similarty calculation was based on):
+
+```
+art by Kasho Takabatake,
+Features: ink drawing on paper | elegant young women, boys, romantic couples | slender figures, melancholic expressions, intricate line work | Taisho Modernism | Japanese popular illustration and lyrical art
+
+art by Torii Kotondo,
+Features: woodblock print | bijin-ga (female portraits) | delicate linework, vibrant pigments, intimate poses, decorative patterns | shin-hanga | early 20th-century Japan
+```
+
 This can be copied to the clipboard and pasted into an Artbreeder prompt.
+
+The descriptions and semi-structured features text is not difficult to collect. We open google search in AI mode in new tabs, using somewhat elaborate prompts. The vector embeddings of the features works, there doesn't seem to be any contention for the free embedding model.
 
 ## Quick start note on API Key
 
