@@ -1,0 +1,11 @@
+.todo-status-msg {
+  animation: todo-fadeout 5s forwards;
+  display: block;
+  color: var(--daft-text-muted);
+}
+
+@keyframes todo-fadeout {
+  0% { opacity: 1; max-height: 2rem; }
+  75% { opacity: 1; max-height: 2rem; }
+  100% { opacity: 0; max-height: 0; margin-bottom: 0; overflow: hidden; }
+}

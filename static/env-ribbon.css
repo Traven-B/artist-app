@@ -1,0 +1,15 @@
+.env-ribbon {
+  position: fixed;
+  top: 30px;
+  right: -50px;
+  width: 200px;
+  background-color: #d00;
+  color: white;
+  text-align: center;
+  line-height: 2;
+  transform: rotate(45deg);
+  z-index: 10000;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
