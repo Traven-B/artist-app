@@ -55,21 +55,6 @@ Static preview of the UI:
 The GitHub Pages demo is a static frontend snapshot. Backend features require
 running the Go application locally.
 
-
-## Quick start note on API KEY
-
-The app can be run without any external API keys.
-
-A Gemini API key is optional. Without one, you can still:
-- add and edit artists
-- upload images
-- browse the gallery
-- use existing precomputed similarity vectors
-
-Embedding generation uses Gemini when a key is available. If embedding generation fails, the artist data is still saved and the missing embedding is recorded for later repair.
-
-A Gemini API key is free to obtain and free within Google's usage limits:
-
 ### Obtaining a Google Gemini API Key
 
 A Gemini API key is required for generating new feature vectors and using semantic search queries.
