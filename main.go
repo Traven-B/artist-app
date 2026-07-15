@@ -3,6 +3,9 @@ package main
 // NOTE:
 // Feature vectors are derived data.
 // Empty ef: means vector generation failed or is pending.
+//     id:18
+//     ef:
+//
 // Never block master record saves on embedding failures.
 
 import (
