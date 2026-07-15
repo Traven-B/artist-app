@@ -31,7 +31,7 @@ art by Torii Kotondo,
 Features: woodblock print | bijin-ga (female portraits) | delicate linework, vibrant pigments, intimate poses, decorative patterns | shin-hanga | early 20th-century Japan
 ```
 
-or the middle button cant put this in the clipboard, two artists who both worked on the original Mirror's Edge game.
+or the middle button can put this in the clipboard, two artists who both worked on the original Mirror's Edge game.
 
 ```
 Johannes Söderqvist:
